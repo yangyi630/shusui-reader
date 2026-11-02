@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>书髓 - 读过的每一本书，让精华不再被遗忘</title>
+    <style>
+        :root {
+            --bg-primary: #faf8f5;
+            --bg-card: #ffffff;
+            --text-primary: #2d2a26;
+            --text-secondary: #6b6560;
+            --accent-amber: #c8956c;
+            --accent-amber-light: #e8c9a8;
+            --accent-amber-dark: #a67548;
+            --highlight-gradient: linear-gradient(135deg, #c8956c, #e8a86b, #d4a574);
+            --shadow-sm: 0 2px 8px rgba(200, 149, 108, 0.1);
+            --shadow-md: 0 4px 16px rgba(200, 149, 108, 0.15);
+            --shadow-lg: 0 8px 32px rgba(200, 149, 108, 0.2);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --transition: all 0.3s ease;
+            --platform-wechat: #4ecdc4;
+            --platform-fanqie: #ff6b6b;
+            --platform-kindle: #f0c040;
+            --platform-douban: #4a9c5d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .serif {
+            font-family: Georgia, "Noto Serif SC", "Songti SC", serif;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(250, 248, 245, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            box-shadow: var(--shadow-md);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .navbar-brand .logo {
+            font-size: 1.8rem;
+        }
+
+        .btn-demo {
+            background: linear-gradient(135deg, var(--accent-amber), var(--accent-amber-dark));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-demo:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(200, 149, 108, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            max-width: 800px;
+        }
+
+        .hero-title .highlight {
+            background: var(--highlight-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 2.5rem;
+        }
+
+        .platform-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .platform-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+
+        .platform-item:hover {
+            background: rgba(200, 149, 108, 0.1);
+        }
+
+        .platform-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .platform-dot.wechat { background: var(--platform-wechat); }
+        .platform-dot.fanqie { background: var(--platform-fanqie); }
+        .platform-dot.kindle { background: var(--platform-kindle); }
+        .platform-dot.douban { background: var(--platform-douban); }
+
+        /* Demo Section */
+        .demo-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .demo-window {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .demo-titlebar {
+            background: #f5f5f5;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .demo-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .demo-dot.red { background: #ff5f57; }
+        .demo-dot.yellow { background: #febc2e; }
+        .demo-dot.green { background: #28c840; }
+
+        .demo-title {
+            margin-left: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .sync-indicator {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--platform-wechat);
+        }
+
+        .sync-indicator-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--platform-wechat);
+            animation: syncPulse 2s infinite;
+        }
+
+        @keyframes syncPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.6; }
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 2rem;
+            min-height: 300px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.6;
+        }
+
+        .empty-state-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state-desc {
+            font-size: 0.9rem;
+            max-width: 280px;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state-btn {
+            background: linear-gradient(135deg, var(--accent-amber), var(--accent-amber-dark));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .empty-state-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .demo-content {
+            display: grid;
+            grid-template-columns: 220px 1fr 1.5fr;
+            min-height: 500px;
+        }
+
+        .demo-tabs {
+            display: flex;
+            background: #fafafa;
+            border-bottom: 1px solid #eee;
+        }
+
+        .demo-tab {
+            padding: 0.875rem 1.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .demo-tab:hover {
+            color: var(--accent-amber);
+        }
+
+        .demo-tab.active {
+            color: var(--accent-amber-dark);
+            font-weight: 600;
+            border-bottom-color: var(--accent-amber);
+        }
+
+        .demo-tab-content {
+            display: none;
+        }
+
+        .demo-tab-content.active {
+            display: block;
+        }
+
+        /* QR Code Modal */
+        .qr-container {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .qr-code {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 1rem;
+            background: white;
+            border: 2px solid #eee;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .qr-code::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-amber);
+            animation: qrScan 2s ease-in-out infinite;
+        }
+
+        @keyframes qrScan {
+            0%, 100% { top: 0; }
+            50% { top: calc(100% - 2px); }
+        }
+
+        .qr-pattern {
+            width: 150px;
+            height: 150px;
+            background-image:
+                linear-gradient(45deg, #333 25%, transparent 25%),
+                linear-gradient(-45deg, #333 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #333 75%),
+                linear-gradient(-45deg, transparent 75%, #333 75%);
+            background-size: 10px 10px;
+            background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+            opacity: 0.8;
+            border-radius: 4px;
+        }
+
+        .qr-tip {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .qr-platform-name {
+            font-weight: 600;
+            color: var(--accent-amber-dark);
+        }
+
+        /* Upload Section */
+        .upload-section {
+            padding: 1.5rem;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--accent-amber-light);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg-primary);
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-amber);
+            background: rgba(200, 149, 108, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent-amber-dark);
+            background: rgba(200, 149, 108, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .upload-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-formats {
+            font-size: 0.8rem;
+            color: var(--accent-amber);
+            background: rgba(200, 149, 108, 0.1);
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        /* Learning Panel */
+        .learning-panel {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 500px;
+        }
+
+        .chapter-sidebar {
+            background: #fafafa;
+            border-right: 1px solid #eee;
+            padding: 1.25rem;
+            overflow-y: auto;
+        }
+
+        .chapter-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .chapter-item {
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .chapter-item:hover {
+            background: rgba(200, 149, 108, 0.1);
+        }
+
+        .chapter-item.active {
+            background: rgba(200, 149, 108, 0.15);
+            color: var(--accent-amber-dark);
+            font-weight: 600;
+        }
+
+        .chapter-item .chapter-num {
+            color: var(--accent-amber);
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+
+        .chapter-item .chapter-count {
+            float: right;
+            font-size: 0.75rem;
+            background: var(--accent-amber);
+            color: white;
+            padding: 0.1rem 0.4rem;
+            border-radius: 10px;
+            margin-top: 0.1rem;
+        }
+
+        .section-item {
+            padding: 0.5rem 0.75rem 0.5rem 2rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+
+        .section-item:hover {
+            background: rgba(200, 149, 108, 0.1);
+            color: var(--text-primary);
+        }
+
+        .study-content {
+            padding: 1.25rem;
+            overflow-y: auto;
+        }
+
+        .study-header {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .study-book-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .study-chapter-name {
+            font-size: 0.95rem;
+            color: var(--accent-amber-dark);
+            font-weight: 600;
+        }
+
+        .study-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .study-stat-item {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .study-stat-value {
+            font-weight: 600;
+            color: var(--accent-amber-dark);
+        }
+
+        .key-point-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent-amber);
+            position: relative;
+        }
+
+        .key-point-card.important {
+            border-left-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.05);
+        }
+
+        .key-point-level {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .key-point-level.must {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .key-point-level.important {
+            background: #f39c12;
+            color: white;
+        }
+
+        .key-point-level.normal {
+            background: var(--accent-amber);
+            color: white;
+        }
+
+        .key-point-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            padding-right: 4rem;
+        }
+
+        .key-point-content {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .key-point-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .study-summary {
+            background: linear-gradient(135deg, rgba(200, 149, 108, 0.1), rgba(232, 168, 107, 0.1));
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .study-summary-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-amber-dark);
+        }
+
+        .study-summary-content {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .uploaded-doc {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            margin-top: 1rem;
+        }
+
+        .uploaded-doc-icon {
+            font-size: 1.5rem;
+        }
+
+        .uploaded-doc-info {
+            flex: 1;
+        }
+
+        .uploaded-doc-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .uploaded-doc-size {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .uploaded-doc-status {
+            font-size: 0.75rem;
+            color: var(--platform-wechat);
+        }
+
+        .demo-sidebar {
+            background: #fafafa;
+            padding: 1.25rem;
+            border-right: 1px solid #eee;
+        }
+
+        .demo-sidebar-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .source-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            border: 2px solid transparent;
+        }
+
+        .source-item:hover {
+            background: rgba(200, 149, 108, 0.1);
+        }
+
+        .source-item.active {
+            background: rgba(200, 149, 108, 0.15);
+            color: var(--accent-amber-dark);
+            font-weight: 600;
+            border-color: var(--accent-amber-light);
+        }
+
+        .source-badge {
+            background: var(--accent-amber);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+        }
+
+        .source-item.active .source-badge {
+            background: var(--accent-amber-dark);
+        }
+
+        .add-platform-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px dashed #ddd;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 0.5rem;
+        }
+
+        .add-platform-btn:hover {
+            border-color: var(--accent-amber);
+            color: var(--accent-amber);
+        }
+
+        .demo-books {
+            padding: 1.25rem;
+            border-right: 1px solid #eee;
+        }
+
+        .demo-books-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .book-item {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 0.75rem;
+            border: 2px solid transparent;
+        }
+
+        .book-item:hover {
+            background: rgba(200, 149, 108, 0.1);
+        }
+
+        .book-item.active {
+            background: rgba(200, 149, 108, 0.15);
+            border-color: var(--accent-amber-light);
+        }
+
+        .book-cover {
+            width: 50px;
+            height: 65px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: var(--transition);
+        }
+
+        .book-item:hover .book-cover {
+            transform: scale(1.05);
+        }
+
+        .book-cover.santi { background: linear-gradient(135deg, #2c3e50, #3498db); }
+        .book-cover.wuxia { background: linear-gradient(135deg, #8e44ad, #9b59b6); }
+        .book-cover.philosophy { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+        .book-cover.history { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .book-cover.huozhe { background: linear-gradient(135deg, #c0392b, #e74c3c); }
+        .book-cover.bainian { background: linear-gradient(135deg, #8b4513, #a0522d); }
+        .book-cover.jian { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .book-cover.weicheng { background: linear-gradient(135deg, #7f8c8d, #95a5a6); }
+
+        .book-info {
+            flex: 1;
+        }
+
+        .book-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .book-author {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .book-highlights {
+            font-size: 0.8rem;
+            color: var(--accent-amber);
+        }
+
+        .demo-highlights {
+            padding: 1.25rem;
+            overflow-y: auto;
+        }
+
+        .demo-highlights-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .demo-highlights-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .ai-tag {
+            background: var(--highlight-gradient);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .source-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .highlight-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent-amber);
+            transition: var(--transition);
+        }
+
+        .highlight-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .highlight-quote {
+            font-family: Georgia, "Noto Serif SC", serif;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .highlight-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .highlight-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .tag {
+            background: rgba(200, 149, 108, 0.15);
+            color: var(--accent-amber-dark);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .tag:hover {
+            background: rgba(200, 149, 108, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .more-highlights {
+            text-align: center;
+            padding: 1rem;
+            color: var(--accent-amber);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px dashed var(--accent-amber-light);
+            border-radius: var(--radius-sm);
+            margin-top: 0.5rem;
+        }
+
+        .more-highlights:hover {
+            color: var(--accent-amber-dark);
+            border-color: var(--accent-amber);
+            background: rgba(200, 149, 108, 0.1);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-width: 480px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(20px);
+            transition: var(--transition);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: rgba(0,0,0,0.1);
+            color: var(--text-primary);
+        }
+
+        .platform-select-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .platform-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.25rem;
+            border: 2px solid #eee;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg-primary);
+        }
+
+        .platform-option:hover {
+            border-color: var(--accent-amber);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .platform-option.selected {
+            border-color: var(--accent-amber);
+            background: rgba(200, 149, 108, 0.1);
+        }
+
+        .platform-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .platform-option-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .platform-option-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 0.25rem;
+        }
+
+        .risk-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .risk-warning h4 {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .risk-warning ul {
+            list-style: disc;
+            padding-left: 1.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .risk-warning li {
+            margin-bottom: 0.25rem;
+        }
+
+        .risk-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .risk-checkbox input[type="checkbox"] {
+            margin-top: 0.25rem;
+            transform: scale(1.2);
+        }
+
+        .login-form {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: var(--bg-primary);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-amber);
+            box-shadow: 0 0 0 3px rgba(200, 149, 108, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, var(--accent-amber), var(--accent-amber-dark));
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .login-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #eee;
+            border-top-color: var(--accent-amber);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-progress {
+            width: 100%;
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            background: var(--highlight-gradient);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .loading-steps {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .loading-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-step.completed {
+            color: var(--platform-wechat);
+        }
+
+        .loading-step.completed::before {
+            content: '✓';
+            width: 16px;
+            height: 16px;
+            background: var(--platform-wechat);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .loading-step::before {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border: 2px solid #eee;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .success-container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .success-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-amber);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 0.75rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 2px solid #eee;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-amber);
+            background: rgba(200, 149, 108, 0.1);
+        }
+
+        /* Pain Points Section */
+        .pain-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--accent-amber);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(1.5rem, 3vw, 2.25rem);
+            font-weight: 700;
+            margin-bottom: 3rem;
+        }
+
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .pain-card {
+            background: var(--bg-card);
+            padding: 1.75rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .pain-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .pain-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .pain-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .pain-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .pain-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Value Section */
+        .value-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .value-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .value-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .value-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .value-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .value-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--highlight-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .value-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .value-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 4rem 2rem 6rem;
+            text-align: center;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-amber), var(--accent-amber-dark));
+            color: white;
+            padding: 1.25rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .cta-note {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-card);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Roadmap Tab */
+        .roadmap-panel {
+            padding: 2rem;
+            min-height: 420px;
+        }
+
+        .roadmap-intro {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .roadmap-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-md);
+            padding: 1.75rem;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid #eee;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .roadmap-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .roadmap-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-amber-light);
+        }
+
+        .roadmap-phase {
+            display: inline-block;
+            background: var(--highlight-gradient);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .roadmap-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .roadmap-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
+        }
+
+        .roadmap-status {
+            display: inline-block;
+            background: rgba(74, 156, 93, 0.1);
+            color: #4a9c5d;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+        }
+
+        .roadmap-status.coming {
+            background: rgba(200, 149, 108, 0.1);
+            color: var(--accent-amber-dark);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 4rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 2rem 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .demo-content, .learning-panel {
+                grid-template-columns: 1fr;
+            }
+            .demo-sidebar, .demo-books, .chapter-sidebar {
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+            .demo-books {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+            .book-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .book-cover {
+                width: 40px;
+                height: 52px;
+            }
+            .platform-select-grid {
+                grid-template-columns: 1fr;
+            }
+            .roadmap-grid {
+                grid-template-columns: 1fr;
+            }
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 0.75rem 1rem;
+            }
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
+            .btn-demo {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+            .hero {
+                padding: 6rem 1rem 3rem;
+            }
+            .platform-list {
+                gap: 1rem;
+            }
+            .pain-grid, .value-grid {
+                grid-template-columns: 1fr;
+            }
+            .section-title {
+                font-size: 1.5rem;
+            }
+            .value-number {
+                font-size: 2.5rem;
+            }
+            .modal {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Section -->
+    <section class="demo-section" id="demo">
+        <div class="demo-window">
+            <div class="demo-titlebar">
+                <span class="demo-dot red"></span>
+                <span class="demo-dot yellow"></span>
+                <span class="demo-dot green"></span>
+                <span class="demo-title">书髓 · 阅读精华聚合面板</span>
+                <span class="sync-indicator">
+                    <span class="sync-indicator-dot"></span>
+                    <span>实时同步中</span>
+                </span>
+            </div>
+            <div class="demo-tabs">
+                <div class="demo-tab active" onclick="switchDemoTab('aggregate', this)">📚 跨平台聚合</div>
+                <div class="demo-tab" onclick="switchDemoTab('learning', this)">📖 学习助手</div>
+                <div class="demo-tab" onclick="switchDemoTab('roadmap', this)">🚀 产品蓝图</div>
+            </div>
+            <div class="demo-tab-content active" id="tab-aggregate">
+                <div class="demo-content">
+                    <div class="demo-sidebar" id="sourcesSidebar">
+                        <div class="demo-sidebar-title">📚 已连接书源</div>
+                        <button class="add-platform-btn" onclick="openConnectModal()">
+                            <span>＋</span>
+                            <span>扫码连接新平台</span>
+                        </button>
+                    </div>
+                    <div class="demo-books" id="booksContainer">
+                        <div class="demo-books-title">📖 已聚合书籍</div>
+                        <div class="empty-state" id="booksEmpty">
+                            <div class="empty-state-icon">📚</div>
+                            <div class="empty-state-title">还没有聚合任何书籍</div>
+                            <div class="empty-state-desc">点击左侧「扫码连接新平台」，授权后即可自动同步您的划线标注与笔记</div>
+                            <button class="empty-state-btn" onclick="openConnectModal()">扫码连接新平台</button>
+                        </div>
+                    </div>
+                    <div class="demo-highlights" id="highlightsContainer">
+                        <div class="demo-highlights-header">
+                            <span class="demo-highlights-title">💡 精华标注</span>
+                            <span class="ai-tag">AI 聚合</span>
+                        </div>
+                        <div class="empty-state" id="highlightsEmpty">
+                            <div class="empty-state-icon">✨</div>
+                            <div class="empty-state-title">暂无精华标注</div>
+                            <div class="empty-state-desc">连接阅读平台后，您的划线金句和笔记精华会出现在这里</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="demo-tab-content" id="tab-learning">
+                <div class="learning-panel">
+                    <div class="chapter-sidebar">
+                        <div class="chapter-title">📂 文档章节</div>
+                        <div class="uploaded-doc">
+                            <span class="uploaded-doc-icon">📄</span>
+                            <div class="uploaded-doc-info">
+                                <div class="uploaded-doc-name">高等数学（上册）.txt</div>
+                                <div class="uploaded-doc-size">156KB · 8章42节</div>
+                            </div>
+                            <span class="uploaded-doc-status">已分析</span>
+                        </div>
+                        <div id="chapterList" style="margin-top: 1.5rem;"></div>
+                        <button class="add-platform-btn" style="margin-top: 1rem;" onclick="document.getElementById('fileInput').click()">
+                            <span>＋</span>
+                            <span>上传 .txt 文档</span>
+                        </button>
+                        <input type="file" id="fileInput" class="upload-input" accept=".txt" onchange="handleFileUpload(event)">
+                    </div>
+                    <div class="study-content" id="studyContent">
+                    </div>
+                </div>
+            </div>
+            <div class="demo-tab-content" id="tab-roadmap">
+                <div class="roadmap-panel">
+                    <div class="roadmap-intro">
+                        <p>书髓的产品规划分为三个阶段，完整版将逐步实现以下愿景：</p>
+                    </div>
+                    <div class="roadmap-grid">
+                        <div class="roadmap-card">
+                            <div class="roadmap-phase">v1.0</div>
+                            <h3>个人知识库</h3>
+                            <p>完成跨平台标注聚合、AI 标签、文档学习与精华回顾，成为每个人的「第二大脑」。</p>
+                            <div class="roadmap-status">Demo 已展示</div>
+                        </div>
+                        <div class="roadmap-card">
+                            <div class="roadmap-phase">v2.0</div>
+                            <h3>知识图谱与导出</h3>
+                            <p>构建个人知识图谱，支持 Markdown / PDF / Notion 导出，打通更多学习工作流。</p>
+                            <div class="roadmap-status coming">规划中</div>
+                        </div>
+                        <div class="roadmap-card">
+                            <div class="roadmap-phase">v3.0</div>
+                            <h3>共享学习生态</h3>
+                            <p>开放精选标注集与书友社区，让优质书籍的集体智慧沉淀传播，推动终身学习型社会。</p>
+                            <div class="roadmap-status coming">未来可期</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <button class="cta-btn" onclick="showCTAAlert()">🚀 成为书髓早期用户</button>
+        <p class="cta-note">产品形态：App + 网页端 + 浏览器插件 · 即将上线</p>
+    </section>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="connectModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">🔗 连接阅读平台</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <div class="platform-select-grid">
+                    <div class="platform-option" data-platform="wechat" onclick="selectPlatform(this)">
+                        <span class="platform-icon">📱</span>
+                        <span class="platform-option-name">微信读书</span>
+                        <span class="platform-option-dot" style="background: var(--platform-wechat)"></span>
+                    </div>
+                    <div class="platform-option" data-platform="fanqie" onclick="selectPlatform(this)">
+                        <span class="platform-icon">🍅</span>
+                        <span class="platform-option-name">番茄读书</span>
+                        <span class="platform-option-dot" style="background: var(--platform-fanqie)"></span>
+                    </div>
+                    <div class="platform-option" data-platform="kindle" onclick="selectPlatform(this)">
+                        <span class="platform-icon">📚</span>
+                        <span class="platform-option-name">Kindle</span>
+                        <span class="platform-option-dot" style="background: var(--platform-kindle)"></span>
+                    </div>
+                    <div class="platform-option" data-platform="douban" onclick="selectPlatform(this)">
+                        <span class="platform-icon">📖</span>
+                        <span class="platform-option-name">豆瓣阅读</span>
+                        <span class="platform-option-dot" style="background: var(--platform-douban)"></span>
+                    </div>
+                </div>
+                <button class="login-btn" onclick="showRiskWarning()" id="nextBtn">下一步</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bookData = {
+            wechat: { name: '微信读书', books: [
+                { id: 'santi', name: '三体', author: '刘慈欣', cover: 'santi', highlightsCount: 32, highlights: [
+                    { quote: '「给岁月以文明，而不是给文明以岁月。」', page: '第217页', tags: ['#哲学思考', '#文明'] },
+                    { quote: '「我们都是阴沟里的虫子，但总得有人仰望星空。」', page: '第156页', tags: ['#理想主义', '#信念'] },
+                    { quote: '「弱小和无知不是生存的障碍，傲慢才是。」', page: '第89页', tags: ['#人性反思', '#历史教训'] }
+                ]},
+                { id: 'wuxia', name: '天龙八部', author: '金庸', cover: 'wuxia', highlightsCount: 18, highlights: [
+                    { quote: '「有情皆孽，无人不冤。」', page: '第342页', tags: ['#江湖', '#命运'] },
+                    { quote: '「侠之大者，为国为民。」', page: '第518页', tags: ['#侠义', '#责任'] },
+                    { quote: '「万般带不走，唯有业随身。」', page: '第789页', tags: ['#佛法', '#人生'] }
+                ]}
+            ]},
+            fanqie: { name: '番茄读书', books: [
+                { id: 'huozhe', name: '活着', author: '余华', cover: 'huozhe', highlightsCount: 25, highlights: [
+                    { quote: '「人是为活着本身而活着，而不是为了活着之外的任何事物所活着。」', page: '第123页', tags: ['#生命', '#存在'] },
+                    { quote: '「以笑的方式哭，在死亡的伴随下活着。」', page: '第87页', tags: ['#苦难', '#坚强'] },
+                    { quote: '「没有什么比时间更具有说服力了，因为时间无需通知我们就可以改变一切。」', page: '第167页', tags: ['#时间', '#变迁'] }
+                ]},
+                { id: 'bainian', name: '百年孤独', author: '马尔克斯', cover: 'bainian', highlightsCount: 22, highlights: [
+                    { quote: '「生命中所有的灿烂，终要用寂寞来偿还。」', page: '第234页', tags: ['#孤独', '#宿命'] },
+                    { quote: '「过去都是假的，回忆是一条没有归途的路。」', page: '第156页', tags: ['#记忆', '#时间'] },
+                    { quote: '「你和死亡之间隔着父母，当父母离开人世，你就直面死亡。」', page: '第312页', tags: ['#亲情', '#生死'] }
+                ]}
+            ]},
+            kindle: { name: 'Kindle', books: [
+                { id: 'cunzai', name: '存在与虚无', author: '萨特', cover: 'philosophy', highlightsCount: 12, highlights: [
+                    { quote: '「人是自己的创造者。」', page: '第45页', tags: ['#存在主义', '#自由'] },
+                    { quote: '「他人即地狱。」', page: '第189页', tags: ['#人际关系', '#异化'] },
+                    { quote: '「存在先于本质。」', page: '第23页', tags: ['#哲学', '#本质'] }
+                ]},
+                { id: 'jian', name: '人类简史', author: '尤瓦尔·赫拉利', cover: 'jian', highlightsCount: 15, highlights: [
+                    { quote: '「人类是唯一能够相信虚构故事的动物。」', page: '第89页', tags: ['#认知革命', '#虚构'] },
+                    { quote: '「历史从无正义。」', page: '第234页', tags: ['#历史', '#公正'] },
+                    { quote: '「金钱是有史以来最普遍也最有效的互信系统。」', page: '第156页', tags: ['#金钱', '#信任'] }
+                ]}
+            ]},
+            douban: { name: '豆瓣阅读', books: [
+                { id: 'wanli', name: '万历十五年', author: '黄仁宇', cover: 'history', highlightsCount: 8, highlights: [
+                    { quote: '「中国两千年来，以道德代替法制，至明代而极，这就是一切问题的症结。」', page: '第56页', tags: ['#历史', '#制度'] },
+                    { quote: '「在这个时候，皇帝的励精图治或者宴安耽乐，首辅的独裁或者调和，高级将领的富于创造或者习于苟安，文官的廉洁奉公或者贪污舞弊，思想家的极端进步或者绝对保守，最后的结果都是无分善恶，统统不能在事业上取得有意义的发展。」', page: '第123页', tags: ['#明代', '#官僚'] },
+                    { quote: '「当一个人口众多的国家，各人行动全凭儒家简单粗浅而又无法固定的原则所限制，而法律又缺乏创造性，则其社会发展的程度，必然受到限制。」', page: '第267页', tags: ['#儒家', '#法律'] }
+                ]},
+                { id: 'weicheng', name: '围城', author: '钱钟书', cover: 'weicheng', highlightsCount: 11, highlights: [
+                    { quote: '「婚姻是一座围城，城外的人想进去，城里的人想出来。」', page: '第134页', tags: ['#婚姻', '#人生'] },
+                    { quote: '「对于丑人，细看是一种残忍。」', page: '第78页', tags: ['#审美', '#人性'] },
+                    { quote: '「天下只有两种人。比如一串葡萄到手，一种人挑最好的先吃，另一种人把最好的留到最后吃。」', page: '第234页', tags: ['#选择', '#性格'] }
+                ]}
+            ]}
+        };
+
+        let selectedPlatform = null;
+        let connectedPlatforms = new Set();
+
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        function scrollToDemo() {
+            document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderSourceList() {
+            const sidebar = document.getElementById('sourcesSidebar');
+            let html = `<div class="demo-sidebar-title">📚 已连接书源</div>`;
+
+            if (connectedPlatforms.size === 0) {
+                html += `
+                    <div style="padding: 1rem 0; text-align: center; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; margin-bottom: 0.5rem;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📱</div>
+                        还没有连接任何平台
+                    </div>
+                `;
+            } else {
+                connectedPlatforms.forEach(platform => {
+                    const totalHighlights = bookData[platform].books.reduce((sum, b) => sum + b.highlightsCount, 0);
+                    const isActive = platform === selectedPlatform ? 'active' : '';
+                    html += `
+                        <div class="source-item ${isActive}" data-platform="${platform}" onclick="selectSource(this)">
+                            <span>${bookData[platform].name}</span>
+                            <span class="source-badge">${totalHighlights}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            html += `
+                <button class="add-platform-btn" onclick="openConnectModal()">
+                    <span>＋</span>
+                    <span>扫码连接新平台</span>
+                </button>
+            `;
+            sidebar.innerHTML = html;
+        }
+
+        function selectSource(element) {
+            document.querySelectorAll('.source-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+            selectedPlatform = element.getAttribute('data-platform');
+            renderBooks(selectedPlatform);
+        }
+
+        function selectBook(element) {
+            document.querySelectorAll('.book-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+            renderHighlights(document.querySelector('.source-item.active').getAttribute('data-platform'), element.getAttribute('data-book'));
+        }
+
+        function renderBooks(platform) {
+            const container = document.getElementById('booksContainer');
+            const books = bookData[platform].books;
+            container.innerHTML = `<div class="demo-books-title">📖 已聚合书籍</div>` + books.map((book, i) => `
+                <div class="book-item ${i===0?'active':''}" data-book="${book.id}" data-source="${bookData[platform].name}" onclick="selectBook(this)">
+                    <div class="book-cover ${book.cover}"></div>
+                    <div class="book-info">
+                        <div class="book-name">${book.name}</div>
+                        <div class="book-author">${book.author} · ${bookData[platform].name}</div>
+                        <div class="book-highlights">✨ ${book.highlightsCount}条精华标注</div>
+                    </div>
+                </div>
+            `).join('');
+            if (books.length) renderHighlights(platform, books[0].id);
+        }
+
+        function renderEmptyBooks() {
+            document.getElementById('booksContainer').innerHTML = `
+                <div class="demo-books-title">📖 已聚合书籍</div>
+                <div class="empty-state" id="booksEmpty">
+                    <div class="empty-state-icon">📚</div>
+                    <div class="empty-state-title">还没有聚合任何书籍</div>
+                    <div class="empty-state-desc">点击左侧「扫码连接新平台」，授权后即可自动同步您的划线标注与笔记</div>
+                    <button class="empty-state-btn" onclick="openConnectModal()">扫码连接新平台</button>
+                </div>
+            `;
+        }
+
+        function renderEmptyHighlights() {
+            document.getElementById('highlightsContainer').innerHTML = `
+                <div class="demo-highlights-header">
+                    <span class="demo-highlights-title">💡 精华标注</span>
+                    <span class="ai-tag">AI 聚合</span>
+                </div>
+                <div class="empty-state" id="highlightsEmpty">
+                    <div class="empty-state-icon">✨</div>
+                    <div class="empty-state-title">暂无精华标注</div>
+                    <div class="empty-state-desc">连接阅读平台后，您的划线金句和笔记精华会出现在这里</div>
+                </div>
+            `;
+        }
+
+        function renderHighlights(platform, bookId) {
+            const container = document.getElementById('highlightsContainer');
+            const book = bookData[platform].books.find(b => b.id === bookId);
+            if (!book) return;
+            container.innerHTML = `
+                <div class="demo-highlights-header">
+                    <span class="demo-highlights-title">💡 精华标注</span>
+                    <span class="ai-tag">AI 聚合</span>
+                </div>
+                <div class="source-text" id="sourceText">来源：${bookData[platform].name} · 《${book.name}》</div>
+                ${book.highlights.map(h => `
+                    <div class="highlight-card">
+                        <div class="highlight-quote serif">${h.quote}</div>
+                        <div class="highlight-meta">
+                            <span>📍 ${h.page} · ${bookData[platform].name}划线</span>
+                        </div>
+                        <div class="highlight-tags">
+                            ${h.tags.map(t => `<span class="tag" onclick="filterByTag('${t}')">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('')}
+                <div class="more-highlights" onclick="showMoreHighlights()">↓ 查看更多${book.highlightsCount}条精华标注 ↓</div>
+            `;
+        }
+
+        function filterByTag(tag) {
+            alert(`正在筛选标签：${tag}\n\n（此功能为 Demo 演示，完整版将支持按标签智能分类与检索）`);
+        }
+
+        function showMoreHighlights() {
+            alert('完整版书髓将展示全部精华标注\n\n支持：\n• 按标签筛选\n• 全文搜索\n• AI 智能分类\n• 导出笔记\n• 定期回顾提醒');
+        }
+
+        function openConnectModal(platform) {
+            document.getElementById('connectModal').classList.add('active');
+            if (platform) {
+                selectedPlatform = platform;
+                showRiskWarning();
+            } else {
+                selectedPlatform = null;
+                renderPlatformSelect();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('connectModal').classList.remove('active');
+        }
+
+        function selectPlatform(element) {
+            document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedPlatform = element.getAttribute('data-platform');
+        }
+
+        function renderPlatformSelect() {
+            document.getElementById('modalBody').innerHTML = `
+                <div class="platform-select-grid">
+                    <div class="platform-option" data-platform="wechat" onclick="selectPlatform(this)">
+                        <span class="platform-icon">📱</span>
+                        <span class="platform-option-name">微信读书</span>
+                        <span class="platform-option-dot" style="background: var(--platform-wechat)"></span>
+                    </div>
+                    <div class="platform-option" data-platform="fanqie" onclick="selectPlatform(this)">
+                        <span class="platform-icon">🍅</span>
+                        <span class="platform-option-name">番茄读书</span>
+                        <span class="platform-option-dot" style="background: var(--platform-fanqie)"></span>
+                    </div>
+                    <div class="platform-option" data-platform="kindle" onclick="selectPlatform(this)">
+                        <span class="platform-icon">📚</span>
+                        <span class="platform-option-name">Kindle</span>
+                        <span class="platform-option-dot" style="background: var(--platform-kindle)"></span>
+                    </div>
+                    <div class="platform-option" data-platform="douban" onclick="selectPlatform(this)">
+                        <span class="platform-icon">📖</span>
+                        <span class="platform-option-name">豆瓣阅读</span>
+                        <span class="platform-option-dot" style="background: var(--platform-douban)"></span>
+                    </div>
+                </div>
+                <button class="login-btn" onclick="showRiskWarning()" id="nextBtn">下一步</button>
+            `;
+        }
+
+        function showRiskWarning() {
+            if (!selectedPlatform) { alert('请先选择一个阅读平台'); return; }
+            const name = bookData[selectedPlatform].name;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="risk-warning">
+                    <h4>⚠️ 授权风险提示</h4>
+                    <p>在继续之前，请您了解以下信息：</p>
+                    <ul>
+                        <li>书髓将读取您在「${name}」的划线标注、笔记和阅读记录</li>
+                        <li>所有数据仅用于个人知识库构建，不会分享给第三方</li>
+                        <li>您可以随时在设置中撤销授权，删除所有数据</li>
+                        <li>请确保您已阅读并同意「${name}」的隐私政策</li>
+                    </ul>
+                </div>
+                <div class="risk-checkbox">
+                    <input type="checkbox" id="riskAgree">
+                    <label for="riskAgree">我已阅读并理解上述风险提示，同意书髓访问我的阅读数据用于个人知识管理。</label>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="renderPlatformSelect()">返回</button>
+                    <button class="login-btn" onclick="showLoginForm()" id="agreeBtn" disabled>同意并继续</button>
+                </div>
+            `;
+            document.getElementById('riskAgree').onchange = function() {
+                document.getElementById('agreeBtn').disabled = !this.checked;
+            };
+        }
+
+        function showLoginForm() {
+            const name = bookData[selectedPlatform].name;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="qr-container">
+                    <div class="qr-code">
+                        <div class="qr-pattern"></div>
+                    </div>
+                    <div class="qr-tip">
+                        打开 <span class="qr-platform-name">${name}</span> App<br>
+                        扫码授权登录以同步您的阅读数据
+                    </div>
+                    <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-secondary);">
+                        🔒 数据仅用于个人知识库构建，不会分享给第三方
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="showRiskWarning()">返回</button>
+                    <button class="login-btn" onclick="simulateScanLogin()">模拟扫码成功</button>
+                </div>
+            `;
+        }
+
+        function simulateScanLogin() {
+            showLoading();
+        }
+
+        function showLoading() {
+            const name = bookData[selectedPlatform].name;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">正在连接「${name}」...</div>
+                    <div class="loading-progress"><div class="loading-progress-bar" id="progressBar"></div></div>
+                    <ul class="loading-steps">
+                        <li class="loading-step" id="step1">验证账号信息</li>
+                        <li class="loading-step" id="step2">获取授权令牌</li>
+                        <li class="loading-step" id="step3">同步书籍列表</li>
+                        <li class="loading-step" id="step4">提取划线标注</li>
+                        <li class="loading-step" id="step5">AI智能标签生成</li>
+                    </ul>
+                </div>
+            `;
+            simulateLoadingProgress();
+        }
+
+        function simulateLoadingProgress() {
+            const steps = ['step1','step2','step3','step4','step5'];
+            const bar = document.getElementById('progressBar');
+            let i = 0;
+            const timer = setInterval(() => {
+                if (i < steps.length) {
+                    document.getElementById(steps[i]).classList.add('completed');
+                    bar.style.width = `${(i+1)*20}%`;
+                    i++;
+                } else {
+                    clearInterval(timer);
+                    setTimeout(showSuccess, 500);
+                }
+            }, 600);
+        }
+
+        function showSuccess() {
+            const name = bookData[selectedPlatform].name;
+            const books = bookData[selectedPlatform].books;
+            const total = books.reduce((sum, b) => sum + b.highlightsCount, 0);
+            document.getElementById('modalBody').innerHTML = `
+                <div class="success-container">
+                    <div class="success-icon">✅</div>
+                    <div class="success-title">连接成功！</div>
+                    <div class="success-text">已成功同步「${name}」的阅读数据</div>
+                    <div class="success-stats">
+                        <div class="stat-item"><div class="stat-value">${books.length}</div><div class="stat-label">本书籍</div></div>
+                        <div class="stat-item"><div class="stat-value">${total}</div><div class="stat-label">条标注</div></div>
+                    </div>
+                    <button class="login-btn" onclick="completeConnection()">立即查看</button>
+                </div>
+            `;
+        }
+
+        function completeConnection() {
+            closeModal();
+            const platform = selectedPlatform;
+            if (!connectedPlatforms.has(platform)) {
+                connectedPlatforms.add(platform);
+            }
+            selectedPlatform = platform;
+            renderSourceList();
+            switchDemoTab('aggregate', document.querySelector('.demo-tab'));
+            selectSource(document.querySelector(`.source-item[data-platform="${platform}"]`));
+        }
+
+        function initDemo() {
+            renderSourceList();
+            renderEmptyBooks();
+            renderEmptyHighlights();
+        }
+
+        function showCTAAlert() {
+            const modal = document.getElementById('connectModal');
+            const modalBody = document.getElementById('modalBody');
+            modal.classList.add('active');
+            modalBody.innerHTML = `
+                <div class="success-container">
+                    <div class="success-icon">🚀</div>
+                    <div class="success-title">感谢关注书髓!</div>
+                    <div class="success-text" style="text-align:left;line-height:1.8;max-width:320px;margin:0 auto 1.5rem;">
+                        <p>产品形态:App+网页端+浏览器插件</p>
+                        <p>核心功能:跨平台标注聚合·AI智能标签·精华回顾</p>
+                        <p>个人开发者，问题与建议请添加联系qq：927831019</p>
+                        <p>感谢您的试用，同行之路，有你胜全</p>
+                    </div>
+                    <div class="modal-footer" style="flex-direction:column;">
+                        <a href="https://forum.trae.cn/t/topic/22900" target="_blank" class="login-btn" style="text-decoration:none;text-align:center;">前往大赛报名帖</a>
+                        <button class="btn-secondary" onclick="closeModal()" style="width:100%;">关闭</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.pain-card, .value-card, .feature-card, .roadmap-card').forEach(card => observer.observe(card));
+
+        initDemo();
+
+        function switchDemoTab(tab, el) {
+            document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            document.querySelectorAll('.demo-tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            if (tab === 'learning' && !window._studyInited) {
+                renderChapterSidebar();
+                renderStudyContent(0);
+                window._studyInited = true;
+            }
+        }
+
+        const chapterData = {
+            1: { name: '函数与极限', points: 8, exam: 5, difficulty: '⭐⭐⭐', summary: '本章是高等数学的基础，核心概念是极限。建议重点掌握极限的定义、性质和计算方法，特别是两个重要极限和洛必达法则。本章约占考试分值的 15%，常考题型：极限计算、无穷小比较、间断点判断。', keyPoints: [
+                { level: 'must', title: '两个重要极限', content: '(1) lim(x→0) sinx/x = 1<br>(2) lim(x→∞) (1+1/x)^x = e<br>这两个极限是计算各种复杂极限的基础，必须熟练掌握其变形和应用。', tags: ['#极限计算', '#必考'] },
+                { level: 'important', title: '洛必达法则', content: '在一定条件下，通过分子分母分别求导再求极限来确定未定式的值。适用于 0/0 型和 ∞/∞ 型等未定式。使用前必须检查是否满足条件。', tags: ['#求导', '#计算方法'] },
+                { level: 'normal', title: '函数的连续性与间断点', content: '函数在某点连续的三个条件：有定义、有极限、极限值等于函数值。间断点分类：第一类（可去、跳跃）和第二类（无穷、振荡）。', tags: ['#连续', '#间断点'] },
+                { level: 'normal', title: '无穷小的比较', content: '高阶、低阶、同阶、等价无穷小的定义。等价无穷小替换是计算极限的重要方法，但只能在乘除中使用，加减时需谨慎。', tags: ['#无穷小', '#等价替换'] }
+            ]},
+            2: { name: '导数与微分', points: 6, exam: 5, difficulty: '⭐⭐⭐', summary: '导数是微积分的核心概念之一，描述函数在某一点的变化率。本章重点掌握导数的定义、基本求导公式、复合函数求导、隐函数求导以及微分的概念与应用。', keyPoints: [
+                { level: 'must', title: '基本求导公式', content: '常数、幂函数、指数函数、对数函数、三角函数、反三角函数的导数公式必须熟记，这是一切求导运算的基础。', tags: ['#求导公式', '#必考'] },
+                { level: 'must', title: '复合函数求导', content: '链式法则：设 y=f(u), u=φ(x)，则 dy/dx = f\'(u)·φ\'(x)。由外向内逐层求导，不要漏层。', tags: ['#链式法则', '#重点'] },
+                { level: 'important', title: '隐函数求导', content: '方程 F(x,y)=0 确定的隐函数，两边对 x 求导，注意 y 是 x 的函数，解出 y\'。', tags: ['#隐函数', '#求导'] }
+            ]},
+            3: { name: '微分中值定理', points: 5, exam: 4, difficulty: '⭐⭐⭐⭐', summary: '微分中值定理是连接函数与其导数的桥梁，是导数应用的理论基础。三大中值定理（罗尔、拉格朗日、柯西）是本章重点，也是证明题的常考内容。', keyPoints: [
+                { level: 'must', title: '拉格朗日中值定理', content: '若函数在闭区间连续、开区间可导，则存在ξ使得 f(b)-f(a) = f\'(ξ)(b-a)。是应用最广泛的中值定理。', tags: ['#中值定理', '#必考'] },
+                { level: 'important', title: '罗尔定理', content: '拉格朗日中值定理的特例，端点函数值相等时存在ξ使得 f\'(ξ)=0。常用于证明方程根的存在性。', tags: ['#罗尔定理', '#证明题'] }
+            ]},
+            4: { name: '不定积分', points: 7, exam: 4, difficulty: '⭐⭐⭐', summary: '不定积分是求导的逆运算，是积分学的基础。掌握基本积分公式、换元积分法和分部积分法，能计算常见函数的不定积分。', keyPoints: [
+                { level: 'must', title: '基本积分公式', content: '与基本求导公式对应，幂函数、指数函数、三角函数等的积分公式必须熟练掌握。', tags: ['#积分公式', '#基础'] },
+                { level: 'important', title: '换元积分法', content: '第一类换元（凑微分法）和第二类换元法，是计算积分的基本方法，需要大量练习熟练掌握。', tags: ['#换元法', '#计算'] }
+            ]},
+            5: { name: '定积分', points: 6, exam: 5, difficulty: '⭐⭐⭐', summary: '定积分是积分学的核心，牛顿-莱布尼茨公式将不定积分与定积分联系起来。掌握定积分的计算方法和性质，理解其几何意义和物理意义。', keyPoints: [
+                { level: 'must', title: '牛顿-莱布尼茨公式', content: '若 F(x) 是 f(x) 的一个原函数，则 ∫[a,b] f(x)dx = F(b)-F(a)。微积分基本定理，必须掌握。', tags: ['#牛顿莱布尼茨', '#核心公式'] }
+            ]},
+            6: { name: '定积分应用', points: 4, exam: 3, difficulty: '⭐⭐⭐', summary: '定积分在几何和物理中有广泛应用，包括计算面积、体积、弧长、功、压力等。关键是掌握元素法（微元法）的思想。', keyPoints: [
+                { level: 'important', title: '平面图形面积', content: '直角坐标系下、极坐标系下平面图形的面积计算，注意积分区间和积分变量的选择。', tags: ['#面积计算', '#几何应用'] }
+            ]},
+            7: { name: '微分方程', points: 5, exam: 4, difficulty: '⭐⭐⭐⭐', summary: '微分方程是描述自然规律的重要工具。掌握可分离变量方程、一阶线性微分方程、二阶常系数线性微分方程的解法。', keyPoints: [
+                { level: 'must', title: '一阶线性微分方程', content: '形如 y\' + P(x)y = Q(x) 的方程，用常数变易法或公式法求解。必须掌握。', tags: ['#一阶线性', '#必考'] }
+            ]},
+            8: { name: '向量代数', points: 3, exam: 2, difficulty: '⭐⭐', summary: '向量是学习多元函数微积分的基础。掌握向量的概念、运算（加减、数乘、点积、叉积）及其几何意义。', keyPoints: [
+                { level: 'normal', title: '向量的数量积与向量积', content: '点积（数量积）结果是数，叉积（向量积）结果是向量。注意几何意义和物理应用。', tags: ['#点积', '#叉积'] }
+            ]}
+        };
+
+        let studyState = {
+            name: '高等数学（上册）',
+            sizeText: '156KB',
+            chapters: Object.keys(chapterData).sort((a, b) => +a - +b).map(k => chapterData[k])
+        };
+
+        function renderStudyContent(chapterIndex) {
+            const ch = studyState.chapters[chapterIndex];
+            if (!ch) return;
+            const container = document.getElementById('studyContent');
+            const pointCount = ch.keyPoints ? ch.keyPoints.length : (ch.points || 0);
+            const examCount = ch.examCount !== undefined ? ch.examCount : (ch.exam || 0);
+            let html = `
+                <div class="study-header">
+                    <div class="study-book-name">${studyState.name}</div>
+                    <div class="study-chapter-name">第${chapterIndex + 1}章 ${ch.title || ch.name}</div>
+                    <div class="study-stats">
+                        <div class="study-stat-item">重点数：<span class="study-stat-value">${pointCount} 个</span></div>
+                        <div class="study-stat-item">考点：<span class="study-stat-value">${examCount} 个</span></div>
+                        <div class="study-stat-item">难度：<span class="study-stat-value">${ch.difficulty}</span></div>
+                    </div>
+                </div>
+                <div class="study-summary">
+                    <div class="study-summary-title">📋 AI 学习规划</div>
+                    <div class="study-summary-content">${ch.summary}</div>
+                </div>
+            `;
+            const points = ch.keyPoints || [];
+            if (points.length === 0) {
+                html += `
+                    <div class="key-point-card">
+                        <div class="key-point-title">暂未识别到关键词重点</div>
+                        <div class="key-point-content">本章内容未明显包含「定义/定理/重点/方法」等关键词。建议通读本章内容后手动标注重点，完整版书髓将支持自定义重点。</div>
+                        <div class="key-point-tags"><span class="tag">#阅读本章</span></div>
+                    </div>
+                `;
+            }
+            points.forEach(p => {
+                const levelClass = p.level === 'must' ? 'important' : (p.level === 'important' ? 'important' : '');
+                const levelText = p.level === 'must' ? '必考点' : (p.level === 'important' ? '高频考点' : '理解掌握');
+                html += `
+                    <div class="key-point-card ${levelClass}">
+                        <span class="key-point-level ${p.level}">${levelText}</span>
+                        <div class="key-point-title">${p.title}</div>
+                        <div class="key-point-content">${p.content}</div>
+                        <div class="key-point-tags">
+                            ${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            html += `<div class="more-highlights" onclick="showMoreStudy()">↓ 查看更多本章重点与习题 ↓</div>`;
+            container.innerHTML = html;
+        }
+
+        function selectChapter(el, chapterIndex) {
+            document.querySelectorAll('.chapter-item').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            renderStudyContent(chapterIndex);
+        }
+
+        function showMoreStudy() {
+            alert('完整版学习助手将提供：\n\n• 完整章节知识点详解\n• 配套练习题与答案解析\n• AI 错题本与薄弱点分析\n• 艾宾浩斯复习计划\n• 思维导图导出\n• 考点押题与真题训练');
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!file.name.endsWith('.txt')) {
+                alert('请上传 .txt 格式的文档');
+                return;
+            }
+            showUploadAnalyzing(file.name, file.size);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const result = analyzeDocument(text);
+                window.currentDoc = { name: file.name, size: file.size, result: result };
+                finishUploadAnalyzing(file.name, file.size);
+            };
+            reader.onerror = function() {
+                alert('文件读取失败，请重试');
+            };
+            reader.readAsText(file);
+        }
+
+        function showUploadAnalyzing(name, size) {
+            const container = document.getElementById('studyContent');
+            container.innerHTML = `
+                <div class="loading-container" style="padding: 3rem 1rem;">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">正在分析文档：${name}</div>
+                    <div class="loading-progress" style="max-width: 300px; margin: 1rem auto 0;">
+                        <div class="loading-progress-bar" id="uploadProgress"></div>
+                    </div>
+                    <ul class="loading-steps" style="max-width: 300px; margin: 1rem auto 0; text-align: left;">
+                        <li class="loading-step" id="ustep1">读取文档内容</li>
+                        <li class="loading-step" id="ustep2">识别章节结构</li>
+                        <li class="loading-step" id="ustep3">提取知识点</li>
+                        <li class="loading-step" id="ustep4">分析重点考点</li>
+                        <li class="loading-step" id="ustep5">生成学习规划</li>
+                    </ul>
+                </div>
+            `;
+            window._uploadSteps = ['ustep1','ustep2','ustep3','ustep4','ustep5'];
+            window._uploadProgress = 0;
+            const bar = document.getElementById('uploadProgress');
+            window._uploadTimer = setInterval(() => {
+                if (window._uploadProgress < window._uploadSteps.length) {
+                    document.getElementById(window._uploadSteps[window._uploadProgress]).classList.add('completed');
+                    bar.style.width = `${(window._uploadProgress+1)*20}%`;
+                    window._uploadProgress++;
+                }
+            }, 400);
+        }
+
+        function finishUploadAnalyzing(name, size) {
+            const sizeKB = Math.round(size / 1024);
+            const checkDone = setInterval(() => {
+                if (window._uploadProgress >= window._uploadSteps.length) {
+                    clearInterval(checkDone);
+                    clearInterval(window._uploadTimer);
+                    document.getElementById('uploadProgress').style.width = '100%';
+                    setTimeout(() => {
+                        studyState = {
+                            name: name.replace('.txt', ''),
+                            sizeText: sizeKB + 'KB',
+                            chapters: window.currentDoc.result.chapters
+                        };
+                        document.querySelector('.uploaded-doc-name').textContent = name;
+                        document.querySelector('.uploaded-doc-size').textContent = sizeKB + 'KB · ' + studyState.chapters.length + '章';
+                        renderChapterSidebar();
+                        renderStudyContent(0);
+                    }, 400);
+                }
+            }, 200);
+        }
+
+        function analyzeDocument(text) {
+            const lines = text.split(/\r?\n/);
+            const chapters = [];
+            let currentChapter = null;
+            let sectionCounter = 0;
+
+            const chapterRegex = /^(?:第\s*[一二三四五六七八九十百零0-9]+\s*[章编部分]|Chapter\s+\d+|第\s*\d+\s*章|CHAPTER\s+\d+|Chapter\s+[IVX]+|^[\d一二三四五六七八九十]+[、.．]\s*.+?章)/i;
+            const sectionRegex = /^(?:第\s*[一二三四五六七八九十0-9]+\s*节|^\d+\.\d+\s+|^[（(]\d+[)）]\s+|^\d+[、.．]\s+)/;
+            const keywordMust = /定义|定理|公式|定律|必考|必须掌握|核心|本质|重要意义|根本原因|关键|重点/;
+            const keywordImportant = /特点|特征|分类|作用|影响|意义|方法|原则|基本|主要|常见|一般|通常/;
+
+            lines.forEach((rawLine, idx) => {
+                const line = rawLine.trim();
+                if (!line) return;
+
+                if (chapterRegex.test(line)) {
+                    if (currentChapter) chapters.push(currentChapter);
+                    sectionCounter = 0;
+                    currentChapter = {
+                        title: line.replace(/^\s*[第]*\s*[一二三四五六七八九十百零0-9]+\s*[章节编部分]\s*[、.．\s]*/i, '').trim() || line,
+                        fullTitle: line,
+                        sections: [],
+                        content: [],
+                        keyPoints: []
+                    };
+                } else if (sectionRegex.test(line) && currentChapter) {
+                    sectionCounter++;
+                    currentChapter.sections.push(line);
+                } else if (currentChapter) {
+                    currentChapter.content.push(line);
+                    const hasKeyword = keywordMust.test(line) || keywordImportant.test(line);
+                    const isLongSentence = line.length >= 20 && line.length <= 200;
+                    if (hasKeyword && isLongSentence) {
+                        const level = keywordMust.test(line) ? 'must' : 'important';
+                        const tags = extractTags(line);
+                        currentChapter.keyPoints.push({
+                            level: level,
+                            title: line.substring(0, line.indexOf('。') > 0 ? line.indexOf('。') : Math.min(30, line.length)) + (line.indexOf('。') > 0 ? '' : ''),
+                            content: line,
+                            tags: tags
+                        });
+                    }
+                }
+            });
+
+            if (currentChapter) chapters.push(currentChapter);
+
+            if (chapters.length === 0) {
+                const chunkSize = 60;
+                let chunks = [];
+                for (let i = 0; i < lines.length; i += chunkSize) {
+                    const chunk = lines.slice(i, i + chunkSize).filter(l => l.trim()).join('\n');
+                    if (chunk) chunks.push(chunk);
+                }
+                chunks.forEach((chunk, i) => {
+                    chapters.push({
+                        title: `第${i+1}部分`,
+                        fullTitle: `第${i+1}部分`,
+                        sections: [],
+                        content: [chunk],
+                        keyPoints: extractKeyPointsFromChunk(chunk)
+                    });
+                });
+            }
+
+            chapters.forEach((ch, index) => {
+                ch.index = index;
+                const charCount = ch.content.join('\n').length;
+                ch.difficulty = charCount > 2000 ? '⭐⭐⭐⭐' : (charCount > 1000 ? '⭐⭐⭐' : (charCount > 500 ? '⭐⭐' : '⭐'));
+                const mustCount = ch.keyPoints.filter(p => p.level === 'must').length;
+                const importantCount = ch.keyPoints.filter(p => p.level === 'important').length;
+                ch.examCount = mustCount + Math.ceil(importantCount / 2);
+                ch.summary = generateChapterSummary(ch);
+            });
+
+            return {
+                chapterCount: chapters.length,
+                chapters: chapters.slice(0, 12)
+            };
+        }
+
+        function extractKeyPointsFromChunk(chunk) {
+            const keywordMust = /定义|定理|公式|定律|必考|必须掌握|核心|本质|重要意义|根本原因|关键|重点/;
+            const keywordImportant = /特点|特征|分类|作用|影响|意义|方法|原则|基本|主要|常见|一般|通常/;
+            const sentences = chunk.split(/[。！？\n]/).filter(s => s.trim().length >= 20 && s.trim().length <= 200);
+            const points = [];
+            sentences.forEach(s => {
+                const hasMust = keywordMust.test(s);
+                const hasImportant = keywordImportant.test(s);
+                if (hasMust || hasImportant) {
+                    points.push({
+                        level: hasMust ? 'must' : 'important',
+                        title: s.substring(0, Math.min(30, s.length)),
+                        content: s,
+                        tags: extractTags(s)
+                    });
+                }
+            });
+            return points.slice(0, 4);
+        }
+
+        function extractTags(text) {
+            const tagSet = new Set();
+            const tagKeywords = {
+                '#定义': /定义|概念/,
+                '#定理': /定理|公理|推论/,
+                '#公式': /公式|等式/,
+                '#方法': /方法|步骤|流程/,
+                '#特征': /特点|特征|性质/,
+                '#应用': /应用|用途|作用/,
+                '#重点': /重点|核心|关键/,
+                '#必考': /必考|重要/,
+                '#历史': /历史|发展|演变/,
+                '#分类': /分类|类型|种类/
+            };
+            Object.keys(tagKeywords).forEach(tag => {
+                if (tagKeywords[tag].test(text)) tagSet.add(tag);
+            });
+            if (tagSet.size === 0) tagSet.add('#重点');
+            return Array.from(tagSet).slice(0, 3);
+        }
+
+        function generateChapterSummary(ch) {
+            const firstContent = ch.content.slice(0, 5).join('；');
+            const mustCount = ch.keyPoints.filter(p => p.level === 'must').length;
+            const importantCount = ch.keyPoints.filter(p => p.level === 'important').length;
+            let summary = `本章主题为「${ch.title}」，共 ${ch.content.length} 段内容。`;
+            if (mustCount > 0 || importantCount > 0) {
+                summary += `AI 识别出 ${mustCount} 个必考点、${importantCount} 个高频考点。`;
+            }
+            summary += `建议重点理解${ch.keyPoints.slice(0, 2).map(p => '「' + p.title + '」').join('、')}，并通过练习加深掌握。`;
+            if (firstContent.length > 20) {
+                summary += `<br><br>内容概要：${firstContent.substring(0, 120)}${firstContent.length > 120 ? '...' : ''}`;
+            }
+            return summary;
+        }
+
+        function renderChapterSidebar() {
+            const chapterList = document.getElementById('chapterList');
+            if (!chapterList) return;
+            const chapters = studyState.chapters;
+            let html = '';
+            chapters.forEach((ch, i) => {
+                const pointCount = ch.keyPoints ? ch.keyPoints.length : (ch.points || 0);
+                html += `
+                    <div class="chapter-item ${i===0?'active':''}" onclick="selectChapter(this, ${i})">
+                        <span><span class="chapter-num">第${i+1}章</span>${ch.title || ch.name}</span>
+                        <span class="chapter-count">${pointCount}</span>
+                    </div>
+                `;
+                if (ch.sections && ch.sections.length) {
+                    ch.sections.slice(0, 4).forEach((sec, j) => {
+                        html += `<div class="section-item">${sec.replace(/^[\d一二三四五六七八九十]+[、.．\s]*/, '').trim() || sec}</div>`;
+                    });
+                }
+            });
+            chapterList.innerHTML = html;
+        }
+
+
+    </script>
+</body>
+</html>

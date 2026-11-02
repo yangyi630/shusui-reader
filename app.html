@@ -1,0 +1,2877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="书髓">
+    <title>书髓 - 跨平台阅读精华聚合</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #faf8f5;
+            --card: #fff;
+            --text: #2d2a26;
+            --text-2: #6b6560;
+            --accent: #c8956c;
+            --accent-2: #a67548;
+            --accent-light: #e8c9a8;
+            --border: #eee;
+            --wechat: #4ecdc4;
+            --fanqie: #ff6b6b;
+            --kindle: #f0c040;
+            --douban: #4a9c5d;
+            --shadow-sm: 0 2px 8px rgba(200,149,108,0.1);
+            --shadow-md: 0 4px 16px rgba(200,149,108,0.15);
+            --shadow-lg: 0 8px 32px rgba(200,149,108,0.2);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --trans: all 0.3s ease;
+        }
+        html, body { height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .serif { font-family: Georgia, "Noto Serif SC", "Songti SC", serif; }
+
+        /* ========== 登录页 ========== */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, #faf8f5 0%, #f5efe5 100%);
+        }
+        .login-card {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        .login-logo {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        .login-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .login-subtitle {
+            color: var(--text-2);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+        .login-tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-radius: var(--radius-md);
+            padding: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .login-tab {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: var(--text-2);
+            transition: var(--trans);
+        }
+        .login-tab.active {
+            background: var(--card);
+            color: var(--accent-2);
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: var(--trans);
+            background: var(--bg);
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(200,149,108,0.1);
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--trans);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-secondary {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg);
+            color: var(--text);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--trans);
+        }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent-2); }
+        .login-footer {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-2);
+        }
+        .login-footer a { color: var(--accent); text-decoration: none; cursor: pointer; }
+
+        /* 二维码登录 */
+        .qr-login {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .qr-code-box {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .qr-code-box img { width: 170px; height: 170px; }
+        .qr-tip {
+            font-size: 0.9rem;
+            color: var(--text-2);
+            margin-bottom: 1rem;
+        }
+        .qr-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(78, 205, 196, 0.1);
+            color: #2a9d8f;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .qr-status.scanned { background: rgba(243, 156, 18, 0.15); color: #d35400; }
+        .qr-status.expired { background: rgba(231, 76, 60, 0.1); color: #c0392b; }
+        .qr-status.confirmed { background: rgba(39, 174, 96, 0.1); color: #27ae60; }
+        .qr-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+        .qr-platform-select {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .qr-platform-item {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--trans);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .qr-platform-item.active {
+            border-color: var(--accent);
+            background: rgba(200,149,108,0.1);
+            color: var(--accent-2);
+            font-weight: 600;
+        }
+        .platform-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+        }
+        .platform-dot.wechat { background: var(--wechat); }
+        .platform-dot.fanqie { background: var(--fanqie); }
+        .platform-dot.kindle { background: var(--kindle); }
+        .platform-dot.douban { background: var(--douban); }
+
+        /* ========== 主应用 ========== */
+        .app {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        .app.active { display: flex; }
+
+        /* 顶部导航 */
+        .topbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            background: rgba(250, 248, 245, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+        .topbar-left { display: flex; align-items: center; gap: 0.75rem; }
+        .topbar-logo { font-size: 1.5rem; }
+        .topbar-title { font-size: 1.1rem; font-weight: 700; }
+        .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+        .user-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            padding-top: 60px;
+            padding-bottom: 70px;
+            overflow-y: auto;
+        }
+
+        /* 底部导航 */
+        .tabbar {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            padding: 0.5rem 0;
+            padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+        }
+        .tabbar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 0.25rem 0;
+            cursor: pointer;
+            color: var(--text-2);
+            transition: var(--trans);
+            font-size: 0.75rem;
+        }
+        .tabbar-item.active { color: var(--accent-2); }
+        .tabbar-icon { font-size: 1.5rem; }
+
+        /* Tab 内容 */
+        .tab-page { display: none; padding: 1rem; }
+        .tab-page.active { display: block; }
+
+        /* 书架 Tab */
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .platform-section {
+            margin-bottom: 1.5rem;
+        }
+        .platform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        .platform-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .sync-btn {
+            font-size: 0.8rem;
+            color: var(--accent);
+            cursor: pointer;
+            padding: 0.25rem 0.75rem;
+            border: 1px solid var(--accent-light);
+            border-radius: 20px;
+            background: rgba(200,149,108,0.05);
+            transition: var(--trans);
+        }
+        .sync-btn:hover { background: rgba(200,149,108,0.15); }
+        .sync-btn.syncing { opacity: 0.6; pointer-events: none; }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.75rem;
+        }
+        .book-item {
+            cursor: pointer;
+            transition: var(--trans);
+        }
+        .book-item:hover { transform: translateY(-3px); }
+        .book-cover {
+            width: 100%;
+            aspect-ratio: 2/3;
+            border-radius: 6px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-end;
+            padding: 0.5rem;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .book-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .book-author {
+            font-size: 0.75rem;
+            color: var(--text-2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-2);
+        }
+        .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+        .empty-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+        .empty-desc { font-size: 0.85rem; line-height: 1.7; margin-bottom: 1rem; max-width: 250px; margin-left: auto; margin-right: auto; }
+
+        /* 连接平台卡片 */
+        .connect-card {
+            background: var(--card);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .connect-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .connect-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--trans);
+        }
+        .connect-item:hover { border-color: var(--accent); background: rgba(200,149,108,0.05); }
+        .connect-item.connected { border-color: var(--wechat); background: rgba(78,205,196,0.05); }
+        .connect-left { display: flex; align-items: center; gap: 0.75rem; }
+        .connect-icon { font-size: 1.5rem; }
+        .connect-info .name { font-weight: 600; font-size: 0.9rem; }
+        .connect-info .desc { font-size: 0.75rem; color: var(--text-2); }
+        .connect-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+        .connect-status.not-linked { color: var(--text-2); background: #f0f0f0; }
+        .connect-status.linked { color: #27ae60; background: rgba(39,174,96,0.1); }
+
+        /* 精华 Tab */
+        .highlight-filter {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        .filter-tag {
+            flex-shrink: 0;
+            padding: 0.4rem 0.875rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--trans);
+            white-space: nowrap;
+        }
+        .filter-tag.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            border-color: transparent;
+        }
+        .highlight-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .highlight-card {
+            background: var(--card);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--accent);
+        }
+        .highlight-quote {
+            font-family: Georgia, "Noto Serif SC", serif;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        .highlight-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-2);
+        }
+        .highlight-tags {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        .tag {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            background: rgba(200,149,108,0.15);
+            color: var(--accent-2);
+            border-radius: 20px;
+        }
+
+        /* 学习 Tab */
+        .upload-card {
+            background: linear-gradient(135deg, rgba(200,149,108,0.1), rgba(232,168,107,0.1));
+            border: 2px dashed var(--accent-light);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: var(--trans);
+        }
+        .upload-card:hover { border-color: var(--accent); background: rgba(200,149,108,0.15); }
+        .upload-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .upload-title { font-weight: 600; margin-bottom: 0.25rem; }
+        .upload-desc { font-size: 0.85rem; color: var(--text-2); }
+        .upload-formats {
+            display: inline-block;
+            margin-top: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(200,149,108,0.1);
+            color: var(--accent-dark);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .doc-item {
+            background: var(--card);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: var(--trans);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .doc-item:hover { transform: translateX(3px); box-shadow: var(--shadow-md); }
+        .doc-icon { font-size: 2rem; }
+        .doc-info { flex: 1; }
+        .doc-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.25rem; }
+        .doc-meta { font-size: 0.8rem; color: var(--text-2); }
+
+        /* 章节列表 */
+        .chapter-page {
+            padding: 1rem;
+        }
+        .chapter-back {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            cursor: pointer;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        .chapter-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .chapter-item {
+            background: var(--card);
+            border-radius: var(--radius-sm);
+            padding: 0.875rem 1rem;
+            cursor: pointer;
+            transition: var(--trans);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chapter-item:hover { background: rgba(200,149,108,0.05); }
+        .chapter-item.active { background: rgba(200,149,108,0.1); color: var(--accent-2); font-weight: 600; }
+        .chapter-num { color: var(--accent); margin-right: 0.5rem; font-size: 0.8rem; }
+        .chapter-count {
+            font-size: 0.75rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+        }
+
+        /* 学习内容 */
+        .study-content {
+            padding: 1rem;
+            padding-bottom: 2rem;
+        }
+        .study-header {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .study-book { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .study-chapter { font-size: 0.9rem; color: var(--accent-2); font-weight: 600; }
+        .study-stats {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .stat-item { font-size: 0.8rem; color: var(--text-2); }
+        .stat-value { font-weight: 600; color: var(--accent-2); }
+
+        .study-summary {
+            background: linear-gradient(135deg, rgba(200,149,108,0.1), rgba(232,168,107,0.1));
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .summary-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--accent-2); }
+        .summary-content { font-size: 0.85rem; color: var(--text-2); line-height: 1.7; }
+
+        .keypoint-card {
+            background: var(--card);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--accent);
+            position: relative;
+        }
+        .keypoint-card.must { border-left-color: #e74c3c; background: rgba(231,76,60,0.03); }
+        .keypoint-card.important { border-left-color: #f39c12; }
+        .keypoint-level {
+            position: absolute;
+            top: 0.75rem; right: 0.75rem;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            color: white;
+        }
+        .keypoint-level.must { background: #e74c3c; }
+        .keypoint-level.important { background: #f39c12; }
+        .keypoint-level.normal { background: var(--accent); }
+        .keypoint-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; padding-right: 4rem; }
+        .keypoint-content { font-size: 0.85rem; color: var(--text-2); line-height: 1.7; }
+        .keypoint-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem; }
+
+        /* 我的 Tab */
+        .profile-card {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border-radius: var(--radius-lg);
+            padding: 2rem 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .profile-avatar {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        .profile-info { flex: 1; }
+        .profile-name { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .profile-desc { font-size: 0.85rem; opacity: 0.9; }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .stat-card {
+            background: var(--card);
+            border-radius: var(--radius-md);
+            padding: 1rem 0.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+        .stat-card .num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-card .label { font-size: 0.75rem; color: var(--text-2); margin-top: 0.25rem; }
+
+        .menu-list {
+            background: var(--card);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: var(--trans);
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item:hover { background: #fafafa; }
+        .menu-icon { font-size: 1.25rem; width: 24px; text-align: center; }
+        .menu-text { flex: 1; font-size: 0.9rem; }
+        .menu-arrow { color: #ccc; font-size: 0.8rem; }
+
+        .logout-btn {
+            margin-top: 1rem;
+            width: 100%;
+            padding: 1rem;
+            background: var(--card);
+            border: none;
+            border-radius: var(--radius-md);
+            color: #e74c3c;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: var(--trans);
+        }
+        .logout-btn:hover { background: #fff5f5; }
+
+        /* 加载遮罩 */
+        .loading-mask {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .loading-mask.active { display: flex; }
+        .loading-box {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            text-align: center;
+            min-width: 200px;
+        }
+        .loading-spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #eee;
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { font-size: 0.9rem; color: var(--text-2); }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            z-index: 3000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .toast.show { opacity: 1; }
+
+        /* 响应式 */
+        @media (min-width: 768px) {
+            .book-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 1rem;
+            }
+        }
+
+        /* Cookie 导入弹窗 */
+        .modal-mask {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1500;
+            padding: 1rem;
+        }
+        .modal-mask.active { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title { font-size: 1.1rem; font-weight: 600; }
+        .modal-close {
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .modal-body { padding: 1.25rem; }
+        .modal-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        .cookie-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-family: monospace;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        .cookie-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(200,149,108,0.1);
+        }
+
+        .guide-steps {
+            background: #faf8f5;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .guide-step {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .guide-step:last-child { margin-bottom: 0; }
+        .step-num {
+            flex-shrink: 0;
+            width: 24px; height: 24px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .step-content { font-size: 0.85rem; line-height: 1.6; }
+        .step-title { font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
+        .step-desc { color: var(--text-2); }
+
+        .tip-box {
+            background: rgba(78,205,196,0.1);
+            border-left: 3px solid var(--wechat);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--text-2);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .btn-wechat {
+            width: 100%;
+            padding: 0.875rem;
+            background: #07c160;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        .btn-wechat:hover { background: #06ae56; transform: translateY(-1px); }
+        .btn-wechat:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .login-method-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .login-method-tab {
+            flex: 1;
+            min-width: 80px;
+            padding: 0.6rem 0.5rem;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            color: var(--text-2);
+        }
+        .login-method-tab.active {
+            background: rgba(200,149,108,0.15);
+            color: var(--accent-2);
+            font-weight: 600;
+        }
+        .login-method-icon { font-size: 1.25rem; margin-bottom: 0.25rem; }
+
+        .connect-wizard {
+            text-align: center;
+        }
+        .wizard-steps {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .wizard-step-dot {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #999;
+            transition: all 0.3s;
+        }
+        .wizard-step-dot.active {
+            background: var(--accent);
+            color: white;
+        }
+        .wizard-step-dot.done {
+            background: #27ae60;
+            color: white;
+        }
+        .wizard-step-line {
+            width: 30px;
+            height: 2px;
+            background: #eee;
+            align-self: center;
+        }
+        .wizard-step-line.done { background: #27ae60; }
+
+        .wizard-content {
+            text-align: left;
+            min-height: 280px;
+        }
+        .wizard-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .wizard-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .wizard-desc {
+            color: var(--text-2);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
+            text-align: center;
+        }
+        .wizard-action {
+            text-align: center;
+        }
+        .btn-open-site {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 2rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .btn-open-site:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(200,149,108,0.3); }
+
+        .cookie-guide-box {
+            background: #faf8f5;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .cookie-guide-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .guide-list {
+            list-style: none;
+            padding: 0;
+        }
+        .guide-list li {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        .guide-list li:last-child { margin-bottom: 0; }
+        .guide-num {
+            flex-shrink: 0;
+            width: 22px; height: 22px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .guide-text { color: var(--text-2); }
+        .guide-text strong { color: var(--text); font-weight: 600; }
+
+        .copy-hint {
+            background: rgba(78,205,196,0.1);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            font-size: 0.8rem;
+            color: var(--text-2);
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .copy-hint code {
+            background: rgba(0,0,0,0.05);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: monospace;
+        }
+
+        .wizard-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+        .wizard-footer .btn-back {
+            padding: 0.625rem 1.25rem;
+            background: transparent;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: var(--text-2);
+            transition: all 0.3s;
+        }
+        .wizard-footer .btn-back:hover { border-color: #ddd; color: var(--text); }
+        .wizard-footer .btn-next {
+            padding: 0.625rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .wizard-footer .btn-next:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(200,149,108,0.3); }
+        .wizard-footer .btn-next:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .syncing-box {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        .syncing-spinner {
+            width: 50px; height: 50px;
+            border: 4px solid #eee;
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .syncing-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .syncing-desc { font-size: 0.85rem; color: var(--text-2); }
+
+        .success-box {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .success-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .success-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: #27ae60; }
+        .success-desc { font-size: 0.9rem; color: var(--text-2); margin-bottom: 1.5rem; }
+        .success-stats {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        .success-stat {
+            text-align: center;
+            padding: 0.75rem 1rem;
+            background: #faf8f5;
+            border-radius: 8px;
+            min-width: 80px;
+        }
+        .success-stat-num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .success-stat-label { font-size: 0.75rem; color: var(--text-2); }
+
+        .study-overview {
+            background: linear-gradient(135deg, #faf8f5, #f5f0e8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .study-overview-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        .study-overview-text {
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: var(--text-2);
+        }
+
+        .theme-badge {
+            display: inline-block;
+            padding: 0.35rem 0.875rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .keyword-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .keyword-tag {
+            padding: 0.3rem 0.75rem;
+            background: rgba(78,205,196,0.1);
+            color: var(--accent-2);
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .keyword-tag:hover {
+            background: rgba(78,205,196,0.2);
+            transform: scale(1.05);
+        }
+        .keyword-tag.high {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .keyword-tag.medium {
+            font-size: 0.85rem;
+        }
+
+        .study-guide-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .study-guide-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .study-guide-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: linear-gradient(180deg, var(--accent), var(--accent-2));
+            border-radius: 2px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+        }
+        .info-item {
+            text-align: center;
+            padding: 0.75rem;
+            background: #faf8f5;
+            border-radius: 8px;
+        }
+        .info-num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--text-2);
+            margin-top: 0.25rem;
+        }
+
+        .question-item {
+            padding: 0.75rem 1rem;
+            background: #faf8f5;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .question-item:hover {
+            background: #f0ebe0;
+        }
+        .question-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        .question-hint {
+            font-size: 0.8rem;
+            color: var(--accent-2);
+        }
+        .question-answer {
+            display: none;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed #ddd;
+            font-size: 0.85rem;
+            color: var(--text-2);
+            line-height: 1.6;
+        }
+        .question-item.show .question-answer {
+            display: block;
+        }
+
+        .mindmap-container {
+            padding: 0.5rem 0;
+        }
+        .mindmap-chapter {
+            margin-bottom: 0.75rem;
+            padding-left: 1rem;
+            border-left: 3px solid var(--accent);
+        }
+        .mindmap-chapter-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+            color: var(--text);
+        }
+        .mindmap-points {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .mindmap-points li {
+            font-size: 0.8rem;
+            color: var(--text-2);
+            padding: 0.15rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+        .mindmap-points li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        .chapter-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.875rem 1rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .chapter-item:hover {
+            background: #faf8f5;
+            border-left-color: var(--accent);
+            transform: translateX(2px);
+        }
+        .chapter-item.active {
+            background: rgba(78,205,196,0.1);
+            border-left-color: var(--accent-2);
+        }
+        .chapter-num {
+            display: inline-block;
+            font-size: 0.75rem;
+            color: var(--accent-2);
+            background: rgba(78,205,196,0.1);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+        }
+        .chapter-count {
+            font-size: 0.75rem;
+            color: var(--text-3);
+            background: #f0ebe0;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- ========== 登录页 ========== -->
+    <div class="login-page" id="loginPage">
+        <div class="login-card">
+            <div class="login-logo">📖</div>
+            <div class="login-title">书髓</div>
+            <div class="login-subtitle">读过的每一本书，让精华不再被遗忘</div>
+
+            <div class="login-tabs">
+                <button class="login-tab active" onclick="switchLoginTab('wechat')">微信登录</button>
+                <button class="login-tab" onclick="switchLoginTab('pwd')">账号密码</button>
+            </div>
+
+            <!-- 微信登录 -->
+            <div id="wechatLogin">
+                <div class="login-method-tabs">
+                    <button class="login-method-tab active" onclick="switchWechatLogin('scan')">
+                        <div class="login-method-icon">💬</div>
+                        <div>微信扫码</div>
+                    </button>
+                    <button class="login-method-tab" onclick="switchWechatLogin('cookie')">
+                        <div class="login-method-icon">🍪</div>
+                        <div>Cookie导入</div>
+                    </button>
+                </div>
+
+                <!-- 微信扫码 -->
+                <div id="wechatScanLogin">
+                    <div class="qr-login">
+                        <div class="qr-code-box" id="wechatQrBox">
+                            <div style="color:#999; text-align:center;">
+                                <div style="font-size:2rem; margin-bottom:0.5rem;">💬</div>
+                                <div style="font-size:0.85rem;">正在加载微信登录...</div>
+                            </div>
+                        </div>
+                        <div class="qr-tip" id="wechatQrTip">使用微信扫码登录书髓</div>
+                        <div class="qr-status" id="wechatQrStatus">等待扫码...</div>
+                        <div class="qr-actions">
+                            <button class="btn-secondary" onclick="refreshWechatQR()">刷新二维码</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cookie 导入 -->
+                <div id="wechatCookieLogin" style="display:none;">
+                    <div class="tip-box">
+                        💡 导入微信读书 Cookie，可获取您的真实书架和划线数据。Cookie仅保存在本地服务器。
+                    </div>
+                    <div class="form-group">
+                        <label>微信读书 Cookie</label>
+                        <textarea class="cookie-textarea" id="loginCookieInput" placeholder="粘贴从微信读书网页版获取的 Cookie 字符串"></textarea>
+                    </div>
+                    <button class="btn-primary" onclick="loginByCookie()">导入并登录</button>
+                    <div style="margin-top:0.75rem; text-align:center;">
+                        <a style="font-size:0.8rem; color:var(--accent); cursor:pointer;" onclick="showCookieGuide()">不知道怎么获取Cookie？</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 账号密码登录 -->
+            <div id="pwdLogin" style="display:none;">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="loginUsername" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="loginPassword" placeholder="请输入密码">
+                </div>
+                <button class="btn-primary" onclick="doLogin()">登录</button>
+                <div class="login-footer">
+                    没有账号？<a onclick="showRegister()">立即注册</a>
+                </div>
+            </div>
+
+            <!-- 注册 -->
+            <div id="registerPanel" style="display:none;">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="regUsername" placeholder="2-20个字符">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="regPassword" placeholder="至少4位">
+                </div>
+                <div class="form-group">
+                    <label>确认密码</label>
+                    <input type="password" id="regPassword2" placeholder="再次输入密码">
+                </div>
+                <button class="btn-primary" onclick="doRegister()">注册</button>
+                <div class="login-footer">
+                    已有账号？<a onclick="showLogin()">返回登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 主应用 ========== -->
+    <div class="app" id="app">
+        <!-- 顶部导航 -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <span class="topbar-logo">📖</span>
+                <span class="topbar-title">书髓</span>
+            </div>
+            <div class="topbar-right">
+                <div class="user-avatar" id="userAvatar">我</div>
+            </div>
+        </div>
+
+        <!-- 主内容 -->
+        <div class="main-content">
+            <!-- 书架 Tab -->
+            <div class="tab-page active" id="tab-books">
+                <div class="section-title">📚 我的书架</div>
+
+                <div class="connect-card">
+                    <div class="section-title" style="margin-bottom: 0.75rem; font-size: 1rem;">
+                        <span>🔗</span><span>连接平台</span>
+                    </div>
+                    <div class="connect-list" id="connectList">
+                    </div>
+                </div>
+
+                <div id="booksContainer">
+                    <div class="empty-state">
+                        <div class="empty-icon">📚</div>
+                        <div class="empty-title">还没有同步的书籍</div>
+                        <div class="empty-desc">连接上方阅读平台账号，自动同步您的划线标注与笔记精华</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 精华 Tab -->
+            <div class="tab-page" id="tab-highlights">
+                <div class="section-title">✨ 精华标注</div>
+                <div class="highlight-filter" id="highlightFilter">
+                    <div class="filter-tag active" data-filter="all">全部</div>
+                </div>
+                <div id="highlightsContainer">
+                    <div class="empty-state">
+                        <div class="empty-icon">💡</div>
+                        <div class="empty-title">暂无精华标注</div>
+                        <div class="empty-desc">连接阅读平台后，您的划线金句和笔记精华会出现在这里</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学习 Tab -->
+            <div class="tab-page" id="tab-study">
+                <div class="section-title">📖 AI 学习助手</div>
+
+                <div class="upload-card" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📄</div>
+                    <div class="upload-title">上传文档开始学习</div>
+                    <div class="upload-desc">AI 自动识别章节、提取重点考点</div>
+                    <div class="upload-formats">支持 .txt 格式</div>
+                </div>
+                <input type="file" id="fileInput" accept=".txt" style="display:none;" onchange="uploadDocument(event)">
+
+                <div id="docsList">
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-title">还没有学习文档</div>
+                        <div class="empty-desc">上传 txt 文档，让 AI 帮你梳理重点、生成学习规划</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学习详情页 -->
+            <div class="tab-page" id="tab-study-detail">
+                <div class="chapter-back" onclick="backToStudyList()">← 返回文档列表</div>
+
+                <!-- 全文概览 -->
+                <div class="study-overview" id="studyOverview">
+                    <div class="study-overview-title">📝 全文摘要</div>
+                    <div class="study-overview-text" id="docSummary">分析中...</div>
+                </div>
+
+                <!-- 主题分类 + 关键词 -->
+                <div class="study-guide-section">
+                    <div class="study-guide-title">🏷️ 主题分类</div>
+                    <div id="docTheme">
+                        <span class="theme-badge">综合类</span>
+                    </div>
+                    <div class="study-guide-title" style="margin-top:1rem;">🔑 核心关键词</div>
+                    <div class="keyword-cloud" id="docKeywords"></div>
+                </div>
+
+                <!-- 文档信息 -->
+                <div class="study-guide-section">
+                    <div class="study-guide-title">📊 文档概况</div>
+                    <div class="info-grid" id="docInfoGrid"></div>
+                </div>
+
+                <!-- 章节列表 -->
+                <div class="study-guide-section">
+                    <div class="study-guide-title">📚 章节目录</div>
+                    <div class="chapter-list" id="chapterList"></div>
+                </div>
+
+                <!-- 学习指南 -->
+                <div class="study-guide-section" id="studyGuideSection">
+                    <div class="study-guide-title">🎯 学习指南</div>
+                    <div id="studyGuideContent"></div>
+                </div>
+
+                <!-- 复习问题 -->
+                <div class="study-guide-section" id="reviewSection">
+                    <div class="study-guide-title">❓ 复习要点</div>
+                    <div id="reviewQuestions"></div>
+                </div>
+
+                <!-- 思维导图 -->
+                <div class="study-guide-section" id="mindmapSection">
+                    <div class="study-guide-title">🧠 知识脉络</div>
+                    <div class="mindmap-container" id="mindMap"></div>
+                </div>
+            </div>
+
+            <!-- 学习内容页 -->
+            <div class="tab-page" id="tab-study-content">
+                <div class="study-content" id="studyContent"></div>
+            </div>
+
+            <!-- 我的 Tab -->
+            <div class="tab-page" id="tab-profile">
+                <div class="profile-card">
+                    <div class="profile-avatar" id="profileAvatar">我</div>
+                    <div class="profile-info">
+                        <div class="profile-name" id="profileName">用户</div>
+                        <div class="profile-desc">书髓 · 阅读精华聚合</div>
+                    </div>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="num" id="statBooks">0</div>
+                        <div class="label">本书籍</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="num" id="statHighlights">0</div>
+                        <div class="label">条标注</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="num" id="statPlatforms">0</div>
+                        <div class="label">个平台</div>
+                    </div>
+                </div>
+
+                <div class="menu-list">
+                    <div class="menu-item" onclick="showToast('功能开发中')">
+                        <span class="menu-icon">⚙️</span>
+                        <span class="menu-text">设置</span>
+                        <span class="menu-arrow">›</span>
+                    </div>
+                    <div class="menu-item" onclick="showToast('功能开发中')">
+                        <span class="menu-icon">📤</span>
+                        <span class="menu-text">导出数据</span>
+                        <span class="menu-arrow">›</span>
+                    </div>
+                    <div class="menu-item" onclick="showToast('功能开发中')">
+                        <span class="menu-icon">🔔</span>
+                        <span class="menu-text">复习提醒</span>
+                        <span class="menu-arrow">›</span>
+                    </div>
+                    <div class="menu-item" onclick="showToast('功能开发中')">
+                        <span class="menu-icon">💬</span>
+                        <span class="menu-text">意见反馈</span>
+                        <span class="menu-arrow">›</span>
+                    </div>
+                    <div class="menu-item" onclick="showAbout()">
+                        <span class="menu-icon">ℹ️</span>
+                        <span class="menu-text">关于书髓</span>
+                        <span class="menu-arrow">›</span>
+                    </div>
+                </div>
+
+                <button class="logout-btn" onclick="doLogout()">退出登录</button>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="tabbar">
+            <div class="tabbar-item active" data-tab="books" onclick="switchTab('books')">
+                <span class="tabbar-icon">📚</span>
+                <span>书架</span>
+            </div>
+            <div class="tabbar-item" data-tab="highlights" onclick="switchTab('highlights')">
+                <span class="tabbar-icon">✨</span>
+                <span>精华</span>
+            </div>
+            <div class="tabbar-item" data-tab="study" onclick="switchTab('study')">
+                <span class="tabbar-icon">📖</span>
+                <span>学习</span>
+            </div>
+            <div class="tabbar-item" data-tab="profile" onclick="switchTab('profile')">
+                <span class="tabbar-icon">👤</span>
+                <span>我的</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 连接平台模态框 -->
+    <div class="modal-mask" id="connectModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="connectModalTitle">连接平台</div>
+                <span class="modal-close" onclick="closeConnectModal()">×</span>
+            </div>
+            <div class="modal-body" id="connectModalBody">
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载遮罩 -->
+    <div class="loading-mask" id="loadingMask">
+        <div class="loading-box">
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loadingText">加载中...</div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ========== 配置 ==========
+        const API_BASE = '/api';
+
+        // ========== 状态 ==========
+        let currentUser = null;
+        let currentPlatform = 'wechat';
+        let currentQrId = null;
+        let qrPollTimer = null;
+        let allBooks = [];
+        let allHighlights = [];
+        let myDocs = [];
+        let currentDoc = null;
+        let currentChapterIndex = 0;
+
+        // ========== 工具函数 ==========
+        function showToast(msg, duration = 2000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), duration);
+        }
+
+        function showLoading(text = '加载中...') {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingMask').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingMask').classList.remove('active');
+        }
+
+        function getToken() {
+            return localStorage.getItem('shushu_token');
+        }
+
+        function setToken(token) {
+            localStorage.setItem('shushu_token', token);
+        }
+
+        function clearToken() {
+            localStorage.removeItem('shushu_token');
+        }
+
+        // ========== API 请求 ==========
+        async function api(path, options = {}) {
+            const url = API_BASE + path;
+            const headers = {
+                'Content-Type': 'application/json',
+                ...(options.headers || {})
+            };
+            const token = getToken();
+            if (token) {
+                headers['Authorization'] = 'Bearer ' + token;
+            }
+
+            try {
+                const resp = await fetch(url, {
+                    method: options.method || 'GET',
+                    headers,
+                    body: options.body ? JSON.stringify(options.body) : undefined
+                });
+                const data = await resp.json();
+                return data;
+            } catch (e) {
+                console.error('API请求失败:', e);
+                return { code: -1, msg: '网络错误，请检查服务是否启动' };
+            }
+        }
+
+        // ========== 登录相关 ==========
+        function switchLoginTab(type) {
+            document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+            event && event.target && event.target.classList.add('active');
+            const wechatLogin = document.getElementById('wechatLogin');
+            const pwdLogin = document.getElementById('pwdLogin');
+            const registerPanel = document.getElementById('registerPanel');
+
+            if (wechatLogin) wechatLogin.style.display = type === 'wechat' ? 'block' : 'none';
+            if (pwdLogin) pwdLogin.style.display = type === 'pwd' ? 'block' : 'none';
+            if (registerPanel) registerPanel.style.display = 'none';
+
+            if (type === 'wechat') {
+                initWechatLogin();
+            }
+        }
+
+        function switchWechatLogin(method) {
+            document.querySelectorAll('.login-method-tab').forEach(t => t.classList.remove('active'));
+            event && event.target && event.target.closest('.login-method-tab') && event.target.closest('.login-method-tab').classList.add('active');
+            document.getElementById('wechatScanLogin').style.display = method === 'scan' ? 'block' : 'none';
+            document.getElementById('wechatCookieLogin').style.display = method === 'cookie' ? 'block' : 'none';
+
+            if (method === 'scan') {
+                initWechatLogin();
+            }
+        }
+
+        async function initWechatLogin() {
+            const res = await api('/wechat/qrcode');
+            if (res.code === 0 && res.data) {
+                if (res.data.available) {
+                    loadWechatQrImage(res.data.qr_url);
+                } else {
+                    showWechatLoginUnavailable();
+                }
+            }
+        }
+
+        function loadWechatQrImage(qrUrl) {
+            const box = document.getElementById('wechatQrBox');
+            if (box) {
+                box.innerHTML = `<img src="${qrUrl}" alt="微信扫码登录" style="width:170px;height:170px;">`;
+            }
+            // 打开新窗口方式的备用方案
+        }
+
+        function showWechatLoginUnavailable() {
+            const box = document.getElementById('wechatQrBox');
+            if (box) {
+                box.innerHTML = `
+                    <div style="color:#999; text-align:center; padding:1rem;">
+                        <div style="font-size:2rem; margin-bottom:0.5rem;">⚠️</div>
+                        <div style="font-size:0.85rem; line-height:1.6;">
+                            微信开放平台未配置<br>
+                            <span style="font-size:0.75rem; color:#bbb;">请使用 Cookie 导入方式</span>
+                        </div>
+                    </div>
+                `;
+            }
+            const tip = document.getElementById('wechatQrTip');
+            if (tip) tip.textContent = '建议使用 Cookie 导入方式登录';
+            const status = document.getElementById('wechatQrStatus');
+            if (status) {
+                status.className = 'qr-status scanned';
+                status.textContent = '点击上方「Cookie导入」';
+            }
+        }
+
+        function refreshWechatQR() {
+            initWechatLogin();
+        }
+
+        async function loginByCookie() {
+            const cookie = document.getElementById('loginCookieInput').value.trim();
+            if (!cookie) {
+                showToast('请输入 Cookie');
+                return;
+            }
+
+            showLoading('验证 Cookie 中...');
+
+            // 先注册一个临时账号或登录
+            try {
+                // 先检查 Cookie 是否有效
+                const checkRes = await api('/platform/cookie/check', {
+                    method: 'POST',
+                    body: { platform: 'wechat', cookie: cookie }
+                });
+
+                if (checkRes.code !== 0 || !checkRes.data || !checkRes.data.valid) {
+                    hideLoading();
+                    showToast('Cookie 无效，请重新获取');
+                    return;
+                }
+
+                // 创建用户（用 cookie 哈希作为标识）
+                const uid = 'wx_' + (checkRes.data.user_info && checkRes.data.user_info.user_id ? checkRes.data.user_info.user_id : Math.random().toString(36).slice(2, 10));
+                const regRes = await api('/auth/register', {
+                    method: 'POST',
+                    body: { username: uid, password: 'shushu123' }
+                });
+
+                let token, user;
+                if (regRes.code === 0 && regRes.data) {
+                    token = regRes.data.token;
+                    user = regRes.data.user;
+                } else {
+                    // 已注册，登录
+                    const loginRes = await api('/auth/login', {
+                        method: 'POST',
+                        body: { username: uid, password: 'shushu123' }
+                    });
+                    if (loginRes.code === 0 && loginRes.data) {
+                        token = loginRes.data.token;
+                        user = loginRes.data.user;
+                    }
+                }
+
+                if (token) {
+                    setToken(token);
+                    currentUser = user;
+
+                    // 同步数据
+                    hideLoading();
+                    showLoading('同步微信读书数据...');
+
+                    const syncRes = await fetch(API_BASE + '/platform/sync/wechat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        },
+                        body: JSON.stringify({ cookie: cookie })
+                    });
+                    const syncData = await syncRes.json();
+
+                    hideLoading();
+
+                    if (syncData.code === 0) {
+                        showToast('登录并同步成功！');
+                        setTimeout(() => enterApp(), 800);
+                    } else {
+                        showToast('登录成功，同步失败：' + (syncData.msg || ''));
+                        setTimeout(() => enterApp(), 1000);
+                    }
+                } else {
+                    hideLoading();
+                    showToast('登录失败');
+                }
+            } catch (e) {
+                hideLoading();
+                showToast('登录失败：' + e.message);
+            }
+        }
+
+        let currentConnectPlatform = 'wechat';
+        let connectStep = 1;
+        let connectPlatformConfig = {
+            wechat: {
+                name: '微信读书',
+                icon: '📱',
+                color: '#4ecdc4',
+                url: 'https://weread.qq.com',
+                hasCookieImport: true,
+                cookieKey: 'wr_vid',
+                steps: [
+                    { title: '前往微信读书官网', desc: '点击下方按钮，在新窗口打开微信读书网页版', action: 'open_site' },
+                    { title: '扫码登录并复制 Cookie', desc: '登录后按 F12 打开开发者工具，复制 Cookie', action: 'cookie_input' },
+                    { title: '同步数据', desc: '正在同步您的书架和划线数据...', action: 'syncing' }
+                ]
+            },
+            fanqie: {
+                name: '番茄读书',
+                icon: '🍅',
+                color: '#ff6b6b',
+                url: 'https://fanqienovel.com',
+                hasCookieImport: true,
+                steps: [
+                    { title: '前往番茄读书官网', desc: '点击下方按钮，在新窗口打开番茄读书网页版', action: 'open_site' },
+                    { title: '登录后复制 Cookie', desc: '登录后按 F12 打开开发者工具，复制 Cookie', action: 'cookie_input' },
+                    { title: '同步数据', desc: '正在同步您的书架和划线数据...', action: 'syncing' }
+                ]
+            },
+            kindle: {
+                name: 'Kindle',
+                icon: '📚',
+                color: '#f0c040',
+                url: 'https://read.amazon.com/notebook',
+                hasCookieImport: true,
+                steps: [
+                    { title: '前往 Kindle 云端阅读', desc: '点击下方按钮，在新窗口打开 Kindle 笔记本页面', action: 'open_site' },
+                    { title: '登录亚马逊账号并复制 Cookie', desc: '登录后按 F12 打开开发者工具，复制 Cookie', action: 'cookie_input' },
+                    { title: '同步数据', desc: '正在同步您的书籍和标注数据...', action: 'syncing' }
+                ]
+            },
+            douban: {
+                name: '豆瓣阅读',
+                icon: '📖',
+                color: '#4a9c5d',
+                url: 'https://read.douban.com',
+                hasCookieImport: true,
+                steps: [
+                    { title: '前往豆瓣阅读官网', desc: '点击下方按钮，在新窗口打开豆瓣阅读', action: 'open_site' },
+                    { title: '登录豆瓣账号并复制 Cookie', desc: '登录后按 F12 打开开发者工具，复制 Cookie', action: 'cookie_input' },
+                    { title: '同步数据', desc: '正在同步您的书架和划线数据...', action: 'syncing' }
+                ]
+            }
+        };
+
+        function openConnectModal(platform) {
+            currentConnectPlatform = platform;
+            connectStep = 1;
+            const config = connectPlatformConfig[platform];
+            if (!config) return;
+
+            const modal = document.getElementById('connectModal');
+            const title = document.getElementById('connectModalTitle');
+            title.textContent = '连接' + config.name;
+
+            renderConnectStep();
+            modal.classList.add('active');
+        }
+
+        function closeConnectModal() {
+            document.getElementById('connectModal').classList.remove('active');
+        }
+
+        function renderConnectStep() {
+            const config = connectPlatformConfig[currentConnectPlatform];
+            const body = document.getElementById('connectModalBody');
+            const totalSteps = config.steps.length;
+
+            let html = '<div class="connect-wizard">';
+
+            // 步骤指示器
+            html += '<div class="wizard-steps">';
+            for (let i = 0; i < totalSteps; i++) {
+                const stepNum = i + 1;
+                let statusClass = '';
+                if (stepNum < connectStep) statusClass = 'done';
+                else if (stepNum === connectStep) statusClass = 'active';
+                html += `<div class="wizard-step-dot ${statusClass}">${stepNum < connectStep ? '✓' : stepNum}</div>`;
+                if (i < totalSteps - 1) {
+                    html += `<div class="wizard-step-line ${stepNum < connectStep ? 'done' : ''}"></div>`;
+                }
+            }
+            html += '</div>';
+
+            // 步骤内容
+            const step = config.steps[connectStep - 1];
+            html += '<div class="wizard-content">';
+
+            if (step.action === 'open_site') {
+                html += `
+                    <div class="wizard-icon">${config.icon}</div>
+                    <div class="wizard-title">${step.title}</div>
+                    <div class="wizard-desc">${step.desc}<br>在官网完成扫码登录后，回到这里继续下一步</div>
+                    <div class="wizard-action">
+                        <a href="${config.url}" target="_blank" class="btn-open-site" onclick="setTimeout(() => { connectStep = 2; renderConnectStep(); }, 500);">
+                            🔗 打开${config.name}官网
+                        </a>
+                    </div>
+                    <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid #eee;">
+                        <div style="font-size:0.85rem; color:var(--text-2); margin-bottom:0.75rem;">登录成功后？</div>
+                        <button class="btn-primary" style="width:100%;" onclick="connectStep = 2; renderConnectStep();">
+                            已完成登录，下一步 →
+                        </button>
+                    </div>
+                `;
+            } else if (step.action === 'cookie_input') {
+                html += `
+                    <div class="wizard-icon">🍪</div>
+                    <div class="wizard-title">复制 Cookie 并粘贴</div>
+                    <div class="wizard-desc">在已登录的网页中，按 F12 打开开发者工具，找到 Cookie 并复制</div>
+
+                    <div class="cookie-guide-box">
+                        <div class="cookie-guide-title">📖 获取 Cookie 步骤</div>
+                        <ul class="guide-list">
+                            <li>
+                                <span class="guide-num">1</span>
+                                <span class="guide-text">在${config.name}页面按 <strong>F12</strong> 打开开发者工具</span>
+                            </li>
+                            <li>
+                                <span class="guide-num">2</span>
+                                <span class="guide-text">切换到 <strong>Network（网络）</strong> 标签，刷新一下页面</span>
+                            </li>
+                            <li>
+                                <span class="guide-num">3</span>
+                                <span class="guide-text">点击任意一个请求，在右侧 <strong>Headers</strong> 中找到 <strong>Cookie</strong> 字段</span>
+                            </li>
+                            <li>
+                                <span class="guide-num">4</span>
+                                <span class="guide-text">右键 Cookie 内容 → <strong>复制值</strong>，粘贴到下方</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-weight:600;">Cookie 字符串</label>
+                        <textarea class="cookie-textarea" id="connectCookieInput" placeholder="在这里粘贴从浏览器复制的完整 Cookie..." style="min-height: 100px;"></textarea>
+                    </div>
+
+                    <div class="tip-box">
+                        🔒 Cookie 仅用于同步您的阅读数据，全部保存在您的本地电脑中，不会上传到任何第三方服务器。
+                    </div>
+                `;
+
+                html += '</div>'; // end wizard-content
+
+                html += `
+                    <div class="wizard-footer">
+                        <button class="btn-back" onclick="connectStep = 1; renderConnectStep();">← 上一步</button>
+                        <button class="btn-next" id="connectNextBtn" onclick="startConnectSync()">开始同步 →</button>
+                    </div>
+                `;
+            } else if (step.action === 'syncing') {
+                html += `
+                    <div class="syncing-box">
+                        <div class="syncing-spinner"></div>
+                        <div class="syncing-title">正在同步数据...</div>
+                        <div class="syncing-desc" id="syncingDesc">正在连接${config.name}...</div>
+                    </div>
+                `;
+            } else if (step.action === 'success') {
+                html += `
+                    <div class="success-box">
+                        <div class="success-icon">🎉</div>
+                        <div class="success-title">同步成功！</div>
+                        <div class="success-desc">已成功获取您的${config.name}数据</div>
+                        <div class="success-stats" id="successStats">
+                        </div>
+                        <button class="btn-primary" style="padding:0.75rem 2rem;" onclick="closeConnectModal();">
+                            完成
+                        </button>
+                    </div>
+                `;
+            } else if (step.action === 'coming') {
+                html += `
+                    <div class="success-box">
+                        <div class="success-icon">🚧</div>
+                        <div class="wizard-title" style="color:var(--accent-2);">${step.title}</div>
+                        <div class="wizard-desc">${step.desc}<br>敬请期待！</div>
+                        <button class="btn-secondary" style="margin-top:1rem;" onclick="closeConnectModal();">
+                            知道了
+                        </button>
+                    </div>
+                `;
+            }
+
+            html += '</div>'; // end wizard-content
+            html += '</div>'; // end connect-wizard
+
+            body.innerHTML = html;
+        }
+
+        async function startConnectSync() {
+            const cookie = document.getElementById('connectCookieInput').value.trim();
+            if (!cookie) {
+                showToast('请粘贴 Cookie 内容');
+                return;
+            }
+
+            const btn = document.getElementById('connectNextBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = '同步中...';
+            }
+
+            connectStep = 3;
+            renderConnectStep();
+
+            try {
+                const res = await api(`/platform/sync/${currentConnectPlatform}`, {
+                    method: 'POST',
+                    body: { cookie: cookie }
+                });
+
+                if (res.code === 0 && res.data && res.data.success) {
+                    // 显示成功
+                    connectStep = 4;
+                    const config = connectPlatformConfig[currentConnectPlatform];
+                    config.steps = [
+                        { title: '前往官网', desc: '', action: 'open_site' },
+                        { title: '复制Cookie', desc: '', action: 'cookie_input' },
+                        { title: '同步数据', desc: '', action: 'syncing' },
+                        { title: '完成', desc: '', action: 'success' }
+                    ];
+                    renderConnectStep();
+
+                    // 填充统计数据
+                    setTimeout(() => {
+                        const statsEl = document.getElementById('successStats');
+                        if (statsEl) {
+                            statsEl.innerHTML = `
+                                <div class="success-stat">
+                                    <div class="success-stat-num">${res.data.book_count || 0}</div>
+                                    <div class="success-stat-label">本书籍</div>
+                                </div>
+                                <div class="success-stat">
+                                    <div class="success-stat-num">${res.data.highlight_count || 0}</div>
+                                    <div class="success-stat-label">条划线</div>
+                                </div>
+                            `;
+                        }
+                    }, 100);
+
+                    // 刷新数据
+                    loadPlatforms();
+                    loadBooks();
+                    loadHighlights();
+                    updateStats();
+                } else {
+                    showToast(res.msg || '同步失败');
+                    connectStep = 2;
+                    renderConnectStep();
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = '开始同步 →';
+                    }
+                }
+            } catch (e) {
+                showToast('同步失败：' + e.message);
+                connectStep = 2;
+                renderConnectStep();
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '开始同步 →';
+                }
+            }
+        }
+
+        function openCookieModal(platform) {
+            openConnectModal(platform);
+        }
+
+        function closeCookieModal() {
+            closeConnectModal();
+        }
+
+        function showCookieGuide() {
+            openConnectModal('wechat');
+        }
+
+        function showRegister() {
+            document.getElementById('pwdLogin').style.display = 'none';
+            const wl = document.getElementById('wechatLogin');
+            if (wl) wl.style.display = 'none';
+            document.getElementById('registerPanel').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('registerPanel').style.display = 'none';
+            document.getElementById('pwdLogin').style.display = 'block';
+            const tabs = document.querySelectorAll('.login-tab');
+            if (tabs.length >= 2) {
+                tabs[1].classList.add('active');
+                tabs[0].classList.remove('active');
+            }
+        }
+
+        function selectQrPlatform(el) {
+            document.querySelectorAll('.qr-platform-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            currentPlatform = el.dataset.platform;
+            createQRCode();
+        }
+
+        async function createQRCode() {
+            const box = document.getElementById('qrCodeBox');
+            const status = document.getElementById('qrStatus');
+            status.className = 'qr-status';
+            status.textContent = '加载二维码中...';
+
+            const res = await api(`/qr/create?platform=${currentPlatform}`);
+            if (res.code === 0 && res.data) {
+                currentQrId = res.data.qr_id;
+                box.innerHTML = `<img src="${res.data.qr_image}" alt="登录二维码">`;
+                status.textContent = '等待扫码...';
+                startQrPolling();
+            } else {
+                box.innerHTML = '<div style="color:#999;font-size:0.85rem;">生成失败</div>';
+                status.textContent = '生成失败，请重试';
+                status.classList.add('expired');
+            }
+        }
+
+        function refreshQRCode() {
+            if (qrPollTimer) clearInterval(qrPollTimer);
+            createQRCode();
+        }
+
+        function startQrPolling() {
+            if (qrPollTimer) clearInterval(qrPollTimer);
+            qrPollTimer = setInterval(async () => {
+                if (!currentQrId) return;
+                const res = await api(`/qr/check/${currentQrId}`);
+                if (res.code === 0 && res.data) {
+                    const status = res.data.status;
+                    const statusEl = document.getElementById('qrStatus');
+
+                    if (status === 'created') {
+                        statusEl.className = 'qr-status';
+                        statusEl.textContent = '等待扫码...';
+                    } else if (status === 'scanned') {
+                        statusEl.className = 'qr-status scanned';
+                        statusEl.textContent = '已扫码，请在手机上确认';
+                    } else if (status === 'confirmed') {
+                        // 登录成功
+                        clearInterval(qrPollTimer);
+                        statusEl.className = 'qr-status confirmed';
+                        statusEl.textContent = '登录成功！';
+                        setTimeout(() => {
+                            checkAuth();
+                        }, 800);
+                    } else if (status === 'expired') {
+                        clearInterval(qrPollTimer);
+                        statusEl.className = 'qr-status expired';
+                        statusEl.textContent = '二维码已过期，请刷新';
+                    }
+                }
+            }, 1500);
+        }
+
+        async function simulateScan() {
+            if (!currentQrId) {
+                showToast('请先生成二维码');
+                return;
+            }
+            showLoading('模拟扫码中...');
+            const res = await api('/qr/scan', {
+                method: 'POST',
+                body: { qr_id: currentQrId, platform: currentPlatform }
+            });
+            hideLoading();
+            if (res.code === 0) {
+                showToast('扫码成功，正在确认登录...');
+                // 2秒后自动确认
+                setTimeout(async () => {
+                    const res2 = await api('/qr/confirm', {
+                        method: 'POST',
+                        body: { qr_id: currentQrId, platform: currentPlatform }
+                    });
+                    if (res2.code === 0 && res2.data) {
+                        setToken(res2.data.token);
+                        currentUser = res2.data.user;
+                        showToast('登录成功！');
+                        setTimeout(() => {
+                            enterApp();
+                        }, 800);
+                    }
+                }, 1500);
+            } else {
+                showToast(res.msg || '扫码失败');
+            }
+        }
+
+        async function doLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (!username || !password) {
+                showToast('请输入用户名和密码');
+                return;
+            }
+
+            showLoading('登录中...');
+            const res = await api('/auth/login', {
+                method: 'POST',
+                body: { username, password }
+            });
+            hideLoading();
+
+            if (res.code === 0 && res.data) {
+                setToken(res.data.token);
+                currentUser = res.data.user;
+                showToast('登录成功！');
+                setTimeout(() => enterApp(), 800);
+            } else {
+                showToast(res.msg || '登录失败');
+            }
+        }
+
+        async function doRegister() {
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            const password2 = document.getElementById('regPassword2').value.trim();
+
+            if (!username || !password) {
+                showToast('请填写完整信息');
+                return;
+            }
+            if (password !== password2) {
+                showToast('两次密码不一致');
+                return;
+            }
+
+            showLoading('注册中...');
+            const res = await api('/auth/register', {
+                method: 'POST',
+                body: { username, password }
+            });
+            hideLoading();
+
+            if (res.code === 0 && res.data) {
+                setToken(res.data.token);
+                currentUser = res.data.user;
+                showToast('注册成功！');
+                setTimeout(() => enterApp(), 800);
+            } else {
+                showToast(res.msg || '注册失败');
+            }
+        }
+
+        function doLogout() {
+            if (confirm('确定要退出登录吗？')) {
+                clearToken();
+                currentUser = null;
+                location.reload();
+            }
+        }
+
+        // ========== 主应用 ==========
+        async function checkAuth() {
+            const token = getToken();
+            if (!token) {
+                document.getElementById('loginPage').style.display = 'flex';
+                document.getElementById('app').classList.remove('active');
+                createQRCode();
+                return;
+            }
+
+            showLoading('验证登录...');
+            const res = await api('/auth/info');
+            hideLoading();
+
+            if (res.code === 0 && res.data) {
+                currentUser = res.data;
+                enterApp();
+            } else {
+                clearToken();
+                document.getElementById('loginPage').style.display = 'flex';
+                document.getElementById('app').classList.remove('active');
+                createQRCode();
+            }
+        }
+
+        function enterApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('app').classList.add('active');
+
+            // 更新用户信息
+            if (currentUser) {
+                const name = currentUser.nickname || currentUser.username || '用户';
+                document.getElementById('userAvatar').textContent = name.charAt(0);
+                document.getElementById('profileAvatar').textContent = name.charAt(0);
+                document.getElementById('profileName').textContent = name;
+            }
+
+            loadPlatforms();
+            loadBooks();
+            loadHighlights();
+            updateStats();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tabbar-item').forEach(i => i.classList.remove('active'));
+            document.querySelector(`.tabbar-item[data-tab="${tab}"]`).classList.add('active');
+
+            document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        // ========== 平台连接 ==========
+        async function loadPlatforms() {
+            const res = await api('/platform/list');
+            const list = document.getElementById('connectList');
+            const platforms = [
+                { key: 'wechat', name: '微信读书', icon: '📱', color: 'wechat' },
+                { key: 'fanqie', name: '番茄读书', icon: '🍅', color: 'fanqie' },
+                { key: 'kindle', name: 'Kindle', icon: '📚', color: 'kindle' },
+                { key: 'douban', name: '豆瓣阅读', icon: '📖', color: 'douban' }
+            ];
+
+            const linked = (res.data || []).map(p => p.platform);
+
+            list.innerHTML = platforms.map(p => {
+                const isLinked = linked.includes(p.key);
+                return `
+                    <div class="connect-item ${isLinked ? 'connected' : ''}" onclick="${isLinked ? '' : `connectPlatform('${p.key}')`}">
+                        <div class="connect-left">
+                            <span class="connect-icon">${p.icon}</span>
+                            <div class="connect-info">
+                                <div class="name">${p.name}</div>
+                                <div class="desc">${isLinked ? '已连接，可以同步数据' : '点击连接账号'}</div>
+                            </div>
+                        </div>
+                        <span class="connect-status ${isLinked ? 'linked' : 'not-linked'}">${isLinked ? '已连接' : '连接'}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function connectPlatform(platform) {
+            openConnectModal(platform);
+        }
+
+        async function syncPlatform(platform) {
+            const btn = event.target;
+            if (btn.classList.contains('syncing')) return;
+            btn.classList.add('syncing');
+            btn.textContent = '同步中...';
+
+            const res = await api(`/platform/sync/${platform}`, { method: 'POST' });
+
+            btn.classList.remove('syncing');
+            btn.textContent = '立即同步';
+
+            if (res.code === 0) {
+                showToast('同步成功！');
+                loadBooks();
+                loadHighlights();
+                updateStats();
+            } else {
+                showToast(res.msg || '同步失败');
+            }
+        }
+
+        // ========== 书籍 ==========
+        async function loadBooks() {
+            const res = await api('/books');
+            allBooks = res.data || [];
+            renderBooks();
+        }
+
+        function renderBooks() {
+            const container = document.getElementById('booksContainer');
+
+            if (allBooks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📚</div>
+                        <div class="empty-title">还没有同步的书籍</div>
+                        <div class="empty-desc">连接上方阅读平台账号，自动同步您的划线标注与笔记精华</div>
+                    </div>
+                `;
+                return;
+            }
+
+            // 按平台分组
+            const byPlatform = {};
+            allBooks.forEach(b => {
+                if (!byPlatform[b.platform]) byPlatform[b.platform] = [];
+                byPlatform[b.platform].push(b);
+            });
+
+            const platformNames = {
+                wechat: '微信读书', fanqie: '番茄读书',
+                kindle: 'Kindle', douban: '豆瓣阅读'
+            };
+
+            let html = '';
+            for (const [platform, books] of Object.entries(byPlatform)) {
+                html += `
+                    <div class="platform-section">
+                        <div class="platform-header">
+                            <div class="platform-name">
+                                <span class="platform-dot ${platform}"></span>
+                                <span>${platformNames[platform] || platform}</span>
+                            </div>
+                            <span class="sync-btn" onclick="syncPlatform('${platform}')">立即同步</span>
+                        </div>
+                        <div class="book-grid">
+                            ${books.map(b => `
+                                <div class="book-item" onclick="openBookDetail('${b.id}')">
+                                    <div class="book-cover" style="background: linear-gradient(135deg, ${getCoverColor(b.cover)});">
+                                    </div>
+                                    <div class="book-title">${b.title}</div>
+                                    <div class="book-author">${b.author}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function getCoverColor(cover) {
+            const colors = {
+                santi: '#2c3e50, #3498db',
+                wuxia: '#8e44ad, #9b59b6',
+                philosophy: '#27ae60, #2ecc71',
+                history: '#e74c3c, #c0392b',
+                huozhe: '#c0392b, #e74c3c',
+                bainian: '#8b4513, #a0522d',
+                jian: '#3498db, #2980b9',
+                weicheng: '#7f8c8d, #95a5a6'
+            };
+            return colors[cover] || '#c8956c, #a67548';
+        }
+
+        function openBookDetail(bookId) {
+            const book = allBooks.find(b => b.id === bookId);
+            if (book) {
+                showToast(`《${book.title}》- 共 ${book.highlights_count || 0} 条标注`);
+            }
+        }
+
+        // ========== 精华 ==========
+        async function loadHighlights() {
+            const res = await api('/highlights');
+            allHighlights = res.data || [];
+            renderHighlights('all');
+            renderHighlightFilter();
+        }
+
+        function renderHighlightFilter() {
+            const tags = new Set();
+            allHighlights.forEach(h => {
+                (h.tags || []).forEach(t => tags.add(t));
+            });
+            const filter = document.getElementById('highlightFilter');
+            let html = '<div class="filter-tag active" data-filter="all" onclick="filterHighlights(\'all\')">全部</div>';
+            Array.from(tags).slice(0, 8).forEach(t => {
+                html += `<div class="filter-tag" data-filter="${t}" onclick="filterHighlights('${t}')">${t}</div>`;
+            });
+            filter.innerHTML = html;
+        }
+
+        function filterHighlights(tag) {
+            document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.filter-tag[data-filter="${tag}"]`).classList.add('active');
+            renderHighlights(tag);
+        }
+
+        function renderHighlights(filter) {
+            const container = document.getElementById('highlightsContainer');
+            let list = allHighlights;
+            if (filter !== 'all') {
+                list = list.filter(h => (h.tags || []).includes(filter));
+            }
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💡</div>
+                        <div class="empty-title">暂无精华标注</div>
+                        <div class="empty-desc">连接阅读平台后，您的划线金句和笔记精华会出现在这里</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `<div class="highlight-list">${
+                list.map(h => `
+                    <div class="highlight-card">
+                        <div class="highlight-quote serif">${h.quote || h.content || ''}</div>
+                        <div class="highlight-meta">
+                            <span>📖 ${h.book_title || '未知书籍'}</span>
+                            <span>${h.page || ''}</span>
+                        </div>
+                        ${h.tags && h.tags.length ? `
+                            <div class="highlight-tags">
+                                ${h.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('')
+            }</div>`;
+        }
+
+        // ========== 学习 ==========
+        async function uploadDocument(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!file.name.endsWith('.txt')) {
+                showToast('请上传 .txt 格式文件');
+                return;
+            }
+
+            showLoading('正在分析文档...');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const token = getToken();
+                const resp = await fetch(API_BASE + '/analyze', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    body: formData
+                });
+                const res = await resp.json();
+                hideLoading();
+
+                if (res.code === 0 && res.data) {
+                    const doc = {
+                        filename: res.data.filename,
+                        chapters: res.data.chapters,
+                        total_chars: res.data.total_chars,
+                        chapter_count: res.data.chapter_count,
+                        uploaded_at: new Date().toLocaleString()
+                    };
+                    myDocs.unshift(doc);
+                    saveDocs();
+                    renderDocs();
+                    showToast('分析完成！');
+                    // 直接打开文档
+                    openDoc(doc);
+                } else {
+                    showToast(res.msg || '分析失败');
+                }
+            } catch (e) {
+                hideLoading();
+                showToast('上传失败：' + e.message);
+            }
+
+            event.target.value = '';
+        }
+
+        function saveDocs() {
+            localStorage.setItem('shushu_docs', JSON.stringify(myDocs));
+        }
+
+        function loadDocs() {
+            const saved = localStorage.getItem('shushu_docs');
+            if (saved) {
+                try { myDocs = JSON.parse(saved); } catch(e) {}
+            }
+            renderDocs();
+        }
+
+        function renderDocs() {
+            const container = document.getElementById('docsList');
+            if (myDocs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-title">还没有学习文档</div>
+                        <div class="empty-desc">上传 txt 文档，让 AI 帮你梳理重点、生成学习规划</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = myDocs.map((doc, i) => `
+                <div class="doc-item" onclick="openDoc(myDocs[${i}])">
+                    <span class="doc-icon">📄</span>
+                    <div class="doc-info">
+                        <div class="doc-name">${doc.filename}</div>
+                        <div class="doc-meta">${doc.chapter_count}章 · ${(doc.total_chars/1000).toFixed(1)}KB · ${doc.uploaded_at}</div>
+                    </div>
+                    <span style="color:#ccc;">›</span>
+                </div>
+            `).join('');
+        }
+
+        function openDoc(doc) {
+            currentDoc = doc;
+            currentChapterIndex = 0;
+            switchTab('study-detail');
+            renderChapterList();
+        }
+
+        function backToStudyList() {
+            switchTab('study');
+        }
+
+        function renderDocDetail() {
+            if (!currentDoc) return;
+
+            // 全文摘要
+            document.getElementById('docSummary').textContent = currentDoc.summary || '暂无摘要';
+
+            // 主题
+            const themeEl = document.getElementById('docTheme');
+            if (currentDoc.theme && currentDoc.theme.main_theme) {
+                themeEl.innerHTML = `<span class="theme-badge">${currentDoc.theme.main_theme}</span>`;
+            }
+
+            // 关键词
+            const kwEl = document.getElementById('docKeywords');
+            if (currentDoc.keywords && currentDoc.keywords.length) {
+                kwEl.innerHTML = currentDoc.keywords.map((k, i) => {
+                    const sizeClass = i < 5 ? 'high' : (i < 10 ? 'medium' : '');
+                    return `<span class="keyword-tag ${sizeClass}">${k.word}</span>`;
+                }).join('');
+            }
+
+            // 文档信息
+            const infoGrid = document.getElementById('docInfoGrid');
+            const guide = currentDoc.study_guide || {};
+            const infoItems = [
+                { num: currentDoc.total_chars || 0, label: '总字数' },
+                { num: (currentDoc.chapters || []).length, label: '章节数' },
+                { num: guide.estimated_read_time || '?', label: '预计阅读(分钟)' },
+                { num: guide.difficulty_level || '中等', label: '难度等级' },
+            ];
+            infoGrid.innerHTML = infoItems.map(item => `
+                <div class="info-item">
+                    <div class="info-num">${item.num}</div>
+                    <div class="info-label">${item.label}</div>
+                </div>
+            `).join('');
+
+            // 章节列表
+            renderChapterList();
+
+            // 学习指南
+            const guideEl = document.getElementById('studyGuideContent');
+            if (guide.core_points && guide.core_points.length) {
+                guideEl.innerHTML = `
+                    <div style="font-size:0.85rem; color:var(--text-2); margin-bottom:0.5rem;">
+                        从全文提取了 ${guide.core_points.length} 个核心要点，建议优先掌握：
+                    </div>
+                    <div style="max-height:200px; overflow-y:auto;">
+                        ${guide.core_points.slice(0, 5).map(p => `
+                            <div style="padding:0.5rem 0; border-bottom:1px solid #f0ebe0; font-size:0.85rem; line-height:1.6;">
+                                <span style="color:var(--accent-2); font-weight:500;">[${p.chapter}]</span>
+                                ${p.content}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // 复习问题
+            const reviewEl = document.getElementById('reviewQuestions');
+            if (guide.review_questions && guide.review_questions.length) {
+                reviewEl.innerHTML = guide.review_questions.map((q, i) => `
+                    <div class="question-item" onclick="this.classList.toggle('show')">
+                        <div class="question-text">${i + 1}. ${q.question}</div>
+                        <div class="question-hint">💡 提示：${q.hint}（点击查看答案）</div>
+                        <div class="question-answer">✅ ${q.answer}</div>
+                    </div>
+                `).join('');
+            }
+
+            // 思维导图
+            const mindEl = document.getElementById('mindMap');
+            if (guide.mind_map_outline && guide.mind_map_outline.length) {
+                mindEl.innerHTML = guide.mind_map_outline.map(ch => `
+                    <div class="mindmap-chapter">
+                        <div class="mindmap-chapter-title">${ch.chapter}</div>
+                        <ul class="mindmap-points">
+                            ${ch.sub_points.map(p => `<li>${p}</li>`).join('')}
+                        </ul>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function renderChapterList() {
+            const list = document.getElementById('chapterList');
+            if (!currentDoc || !currentDoc.chapters) return;
+
+            list.innerHTML = currentDoc.chapters.map((ch, i) => `
+                <div class="chapter-item ${i === currentChapterIndex ? 'active' : ''}" onclick="openChapter(${i})">
+                    <span>
+                        <span class="chapter-num">第${i+1}章</span>
+                        ${ch.title || '未命名章节'}
+                    </span>
+                    <span class="chapter-count">${(ch.key_points || []).length}要点</span>
+                </div>
+            `).join('');
+        }
+
+        function openChapter(index) {
+            currentChapterIndex = index;
+            renderChapterList();
+            switchTab('study-content');
+            renderStudyContent();
+        }
+
+        function renderStudyContent() {
+            const container = document.getElementById('studyContent');
+            if (!currentDoc || !currentDoc.chapters) return;
+            const ch = currentDoc.chapters[currentChapterIndex];
+            if (!ch) return;
+
+            const points = ch.key_points || [];
+
+            let html = `
+                <div class="chapter-back" onclick="switchTab('study-detail')">← 返回章节列表</div>
+                <div class="study-header">
+                    <div class="study-book">${currentDoc.filename}</div>
+                    <div class="study-chapter">第${currentChapterIndex + 1}章 ${ch.title || ''}</div>
+                    <div class="study-stats">
+                        <div class="stat-item">重点数：<span class="stat-value">${points.length} 个</span></div>
+                        <div class="stat-item">字数：<span class="stat-value">${ch.char_count || 0}</span></div>
+                        <div class="stat-item">难度：<span class="stat-value">${ch.difficulty || '⭐⭐'}</span></div>
+                    </div>
+                </div>
+                <div class="study-summary">
+                    <div class="summary-title">📋 AI 学习规划</div>
+                    <div class="summary-content">${ch.summary || 'AI正在分析本章内容...'}</div>
+                </div>
+            `;
+
+            if (points.length === 0) {
+                html += `
+                    <div class="keypoint-card">
+                        <div class="keypoint-title">暂未识别到关键词重点</div>
+                        <div class="keypoint-content">本章内容未明显包含「定义/定理/重点/方法」等关键词。建议通读本章内容。</div>
+                        <div class="keypoint-tags"><span class="tag">#阅读本章</span></div>
+                    </div>
+                `;
+            } else {
+                points.forEach(p => {
+                    const levelClass = p.level === 'must' ? 'must' : (p.level === 'important' ? 'important' : 'normal');
+                    const levelText = p.level === 'must' ? '必考点' : (p.level === 'important' ? '高频考点' : '理解掌握');
+                    html += `
+                        <div class="keypoint-card ${levelClass}">
+                            <span class="keypoint-level ${p.level}">${levelText}</span>
+                            <div class="keypoint-title">${p.title || ''}</div>
+                            <div class="keypoint-content">${p.content || ''}</div>
+                            ${p.tags && p.tags.length ? `
+                                <div class="keypoint-tags">
+                                    ${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+            }
+
+            container.innerHTML = html;
+        }
+
+        // ========== 统计 ==========
+        function updateStats() {
+            const platformCount = currentUser && currentUser.platforms
+                ? Object.keys(currentUser.platforms).length : 0;
+
+            document.getElementById('statBooks').textContent = allBooks.length;
+            document.getElementById('statHighlights').textContent = allHighlights.length;
+            document.getElementById('statPlatforms').textContent = platformCount;
+        }
+
+        // ========== 关于 ==========
+        function showAbout() {
+            alert('书髓 v1.0.0\n\n读过的每一本书，让精华不再被遗忘。\n\n跨平台阅读精华聚合 + AI 学习助手');
+        }
+
+        // ========== 初始化 ==========
+        window.addEventListener('load', () => {
+            loadDocs();
+            checkAuth();
+        });
+
+        // 页面卸载时清理定时器
+        window.addEventListener('beforeunload', () => {
+            if (qrPollTimer) clearInterval(qrPollTimer);
+        });
+    </script>
+</body>
+</html>
